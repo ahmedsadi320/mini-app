@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money Garden - Professional Task Page</title>
+    <title>Money Garden - Pro Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -12,7 +12,9 @@
             --card-dark: #1e1e3d;
             --primary-gradient: linear-gradient(90deg, #ff4081, #7c4dff);
             --text-white: #ffffff;
-            --btn-blue: #00bcd4;
+            --text-gray: #b0b0b0;
+            --green: #4caf50;
+            --blue: #00bcd4;
         }
 
         body {
@@ -21,159 +23,200 @@
             color: var(--text-white);
             margin: 0; padding: 0;
             display: flex; flex-direction: column; height: 100vh;
+            overflow: hidden;
         }
 
+        /* ১. হেডার (স্ক্রিনশট ১-৫ এ যেমন আছে) */
         .user-header {
             background: var(--primary-gradient);
             padding: 20px; text-align: center;
             border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-
+        .avatar {
+            width: 60px; height: 60px; background: #ffffff33;
+            border-radius: 50%; display: inline-flex; align-items: center;
+            justify-content: center; font-size: 24px; border: 2px solid white;
+            margin-bottom: 5px; font-weight: bold;
+        }
         .balance-badge {
-            background: rgba(0,0,0,0.3);
-            padding: 8px 20px; border-radius: 20px;
-            display: inline-block; font-weight: bold; margin-top: 10px;
+            background: rgba(0,0,0,0.3); padding: 5px 15px;
+            border-radius: 20px; font-size: 14px; display: inline-block;
         }
 
-        .content-area { flex: 1; overflow-y: auto; padding: 15px 15px 100px 15px; }
+        .content-area { flex: 1; overflow-y: auto; padding: 15px 15px 80px 15px; }
         .page { display: none; }
         .page.active { display: block; }
 
-        /* Task Card Style - Exactly as Screenshot */
-        .task-card {
-            background: var(--card-dark);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
+        /* কার্ড ডিজাইন */
+        .card {
+            background: var(--card-dark); border-radius: 15px;
+            padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .task-icon-bg {
-            width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-            font-size: 24px; margin-bottom: 10px; color: #7c4dff;
+        /* ২. হোম পেজ ডিজাইন (স্ক্রিনশট ১) */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-card { text-align: center; padding: 15px; }
+        .stat-card i { font-size: 24px; color: var(--primary-gradient); margin-bottom: 5px; }
+
+        /* ৩. সাপোর্ট পেজ ডিজাইন (স্ক্রিনশট ২) */
+        .support-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .support-btn {
+            background: var(--card-dark); border-radius: 12px; padding: 15px;
+            text-align: center; border: 1px solid #333; cursor: pointer;
+        }
+        .support-btn i { font-size: 24px; margin-bottom: 8px; display: block; }
+
+        /* ৪. টাস্ক কার্ড ডিজাইন (স্ক্রিনশট ৩) */
+        .task-card { border-radius: 20px; text-align: center; padding: 20px; margin-bottom: 20px; }
+        .task-icon-bg { font-size: 40px; margin-bottom: 10px; color: #7c4dff; }
+        .reward-tag { color: var(--green); font-weight: bold; margin: 10px 0; }
+        
+        /* ৫. উইথড্র পেজ (স্ক্রিনশট ৪) */
+        label { display: block; font-size: 13px; margin: 10px 0 5px; color: var(--text-gray); }
+        input, select {
+            width: 100%; padding: 12px; border-radius: 8px;
+            border: 1px solid #444; background: #252545; color: white;
+            box-sizing: border-box;
         }
 
-        .reward-box {
-            background: rgba(0,0,0,0.2);
-            color: #4caf50;
-            padding: 8px;
-            border-radius: 10px;
-            font-weight: bold;
-            margin: 15px 0;
-            font-size: 14px;
+        /* বাটন স্টাইল */
+        .btn-main {
+            background: var(--primary-gradient); border: none; color: white;
+            padding: 12px; border-radius: 10px; width: 100%; font-weight: bold;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
+        .btn-outline { background: #333; border: 1px solid #555; }
+        .btn-cyan { background: var(--blue); }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-
-        .btn-task {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .btn-open { background: #333; border: 1px solid #555; }
-        .btn-claim { background: var(--btn-blue); }
-
-        /* Navigation */
+        /* বটম নেভিগেশন (স্ক্রিনশট ১-৫ অনুযায়ী) */
         .bottom-nav {
-            position: fixed; bottom: 0; width: 100%;
-            background: #1e1e3d; display: flex;
-            justify-content: space-around; padding: 12px 0;
-            border-top: 1px solid #333;
+            position: fixed; bottom: 0; width: 100%; background: var(--card-dark);
+            display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #333;
         }
-        .nav-item { text-align: center; color: #b0b0b0; font-size: 12px; flex: 1; }
+        .nav-item { text-align: center; color: var(--text-gray); font-size: 11px; flex: 1; }
         .nav-item.active { color: #ff4081; }
-        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 3px; }
     </style>
 </head>
 <body>
 
     <div class="user-header">
-        <h3 id="display-name" style="margin:0;">টানু</h3>
-        <div class="balance-badge">ব্যালেন্স: <span id="balance">45.00</span> TAKA</div>
+        <div class="avatar" id="user-initial">T</div>
+        <h4 id="display-name" style="margin:0;">টানু</h4>
+        <div class="balance-badge">💰 ব্যালেন্স: <span id="balance">45.00</span> TAKA</div>
     </div>
 
     <div class="content-area">
         <div id="home" class="page active">
-            <p style="text-align:center; padding-top: 50px;">হোম পেজ...</p>
+            <div class="stats-grid">
+                <div class="card stat-card">
+                    <i class="fa-solid fa-rectangle-ad"></i>
+                    <p style="font-size:12px; margin:0;">দৈনিক বিজ্ঞাপন</p>
+                    <b>1/10</b>
+                </div>
+                <div class="card stat-card">
+                    <i class="fa-solid fa-users"></i>
+                    <p style="font-size:12px; margin:0;">মোট রেফার</p>
+                    <b>0</b>
+                </div>
+            </div>
+            <div class="card">
+                <h4 style="margin:0;"><i class="fa-solid fa-gift"></i> বন্ধুদের রেফার করুন</h4>
+                <p style="font-size:12px; color:var(--text-gray);">প্রতি রেফারে ৫০ টাকা বোনাস পান!</p>
+                <input type="text" id="ref-link" value="https://t.me/your_bot?start=123" readonly>
+                <div class="stats-grid">
+                    <button class="btn-main" onclick="copyLink()">কপি করুন</button>
+                    <button class="btn-main btn-cyan">শেয়ার করুন</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="support" class="page">
+            <div class="card" style="text-align: center;">
+                <h4 style="margin-top:0;">টিউটোরিয়াল ভিডিও</h4>
+                <div style="background:#000; height:150px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
+                    <i class="fa-solid fa-circle-play" style="font-size:50px; color:white;"></i>
+                </div>
+                <button class="btn-main" onclick="window.open('আপনার_লিঙ্ক')">টিউটোরিয়াল দেখুন</button>
+            </div>
+            <div class="support-grid">
+                <div class="support-btn" onclick="window.open('https://t.me/আপনার_ইউজারনেম')"><i class="fa-brands fa-telegram" style="color:#248bcf;"></i>টেলিগ্রাম</div>
+                <div class="support-btn"><i class="fa-solid fa-envelope" style="color:#f44336;"></i>ইমেইল</div>
+                <div class="support-btn"><i class="fa-solid fa-circle-question" style="color:#ffeb3b;"></i>FAQ</div>
+                <div class="support-btn"><i class="fa-solid fa-comment-dots" style="color:#4caf50;"></i>লাইভ চ্যাট</div>
+            </div>
         </div>
 
         <div id="tasks" class="page">
-            <h4 style="margin-bottom:20px;"><i class="fa-solid fa-list-check"></i> দৈনিক টাস্ক প্রসেস</h4>
-
-            <div class="task-card">
-                <div class="task-icon-bg"><i class="fa-brands fa-telegram"></i></div>
-                <div><b>টেলিগ্রাম চ্যানেল যোগ দিন</b></div>
-                <small style="color:var(--text-gray)">চ্যানেল জয়েন করুন তারপর চেক ও ক্লেইম বাটনে ক্লিক করুন</small>
-                <div class="reward-box">🎁 রিওয়ার্ড: ৪০.০০ TAKA</div>
-                <div class="btn-group">
-                    <button class="btn-task btn-open" onclick="window.open('আপনার_চ্যানেল_লিঙ্ক_১')"><i class="fa-solid fa-external-link"></i> চ্যানেল ওপেন</button>
-                    <button class="btn-task btn-claim" onclick="alert('Checking...')">চেক ও ক্লেইম</button>
-                </div>
+            <div class="card task-card">
+                <div class="task-icon-bg"><i class="fa-solid fa-video"></i></div>
+                <b>বিজ্ঞাপন দেখুন</b>
+                <div class="reward-tag">পুরস্কার: ২৫.০০ TAKA</div>
+                <button class="btn-main" onclick="window.open('আপনার_লিঙ্ক')">ভিডিও দেখুন</button>
             </div>
-
-            <div class="task-card">
-                <div class="task-icon-bg"><i class="fa-brands fa-telegram"></i></div>
-                <div><b>টেলিগ্রাম চ্যানেল যোগ দিন</b></div>
-                <small style="color:var(--text-gray)">চ্যানেল জয়েন করুন তারপর চেক ও ক্লেইম বাটনে ক্লিক করুন</small>
-                <div class="reward-box">🎁 রিওয়ার্ড: ৪০.০০ TAKA</div>
-                <div class="btn-group">
-                    <button class="btn-task btn-open" onclick="window.open('আপনার_চ্যানেল_লিঙ্ক_২')"><i class="fa-solid fa-external-link"></i> চ্যানেল ওপেন</button>
-                    <button class="btn-task btn-claim" onclick="alert('Checking...')">চেক ও ক্লেইম</button>
-                </div>
-            </div>
-
-            <div class="task-card">
-                <div class="task-icon-bg" style="color:#f44336;"><i class="fa-solid fa-video"></i></div>
-                <div><b>বিজ্ঞাপন দেখুন</b></div>
-                <small style="color:var(--text-gray)">প্রতিটি বিজ্ঞাপন থেকে ২৫.০০ TAKA আয় করুন</small>
-                <div class="reward-box">🎁 রিওয়ার্ড: ২৫.০০ TAKA</div>
-                <div class="btn-group">
-                    <button class="btn-task btn-open" style="flex:2; background:var(--primary-gradient);" onclick="window.open('আপনার_ভিডিও_লিঙ্ক')"><i class="fa-solid fa-play"></i> বিজ্ঞাপন দেখুন</button>
-                </div>
-            </div>
-
-            <div class="task-card">
-                <div class="task-icon-bg"><i class="fa-brands fa-telegram"></i></div>
-                <div><b>টেলিগ্রাম চ্যানেল যোগ দিন</b></div>
-                <small style="color:var(--text-gray)">চ্যানেল জয়েন করুন তারপর চেক ও ক্লেইম বাটনে ক্লিক করুন</small>
-                <div class="reward-box">🎁 রিওয়ার্ড: ৪০.০০ TAKA</div>
-                <div class="btn-group">
-                    <button class="btn-task btn-open" onclick="window.open('আপনার_চ্যানেল_লিঙ্ক_৩')"><i class="fa-solid fa-external-link"></i> চ্যানেল ওপেন</button>
-                    <button class="btn-task btn-claim" onclick="alert('Checking...')">চেক ও ক্লেইম</button>
+            <div class="card task-card">
+                <div class="task-icon-bg" style="color:#248bcf;"><i class="fa-brands fa-telegram"></i></div>
+                <b>টেলিগ্রাম চ্যানেল জয়েন</b>
+                <div class="reward-tag">পুরস্কার: ৪০.০০ TAKA</div>
+                <div class="stats-grid">
+                    <button class="btn-main btn-outline" onclick="window.open('আপনার_লিঙ্ক')">চ্যানেল ওপেন</button>
+                    <button class="btn-main btn-cyan">চেক ও ক্লেইম</button>
                 </div>
             </div>
         </div>
 
-        <div id="withdraw" class="page">...উইথড্র পেজ...</div>
-        <div id="support" class="page">...সাপোর্ট পেজ...</div>
+        <div id="withdraw" class="page">
+            <div class="card">
+                <h4 style="text-align:center;">💰 টাকা উত্তোলন</h4>
+                <p style="text-align:center; font-size:12px; color:var(--green);">ন্যূনতম উত্তোলন: ৮০০ টাকা</p>
+                <label>পদ্ধতি নির্বাচন করুন:</label>
+                <select><option>বিকাশ</option><option>নগদ</option></select>
+                <label>একাউন্ট নম্বর:</label>
+                <input type="number" placeholder="01XXXXXXXXX">
+                <label>পরিমাণ (TAKA):</label>
+                <input type="number" placeholder="সর্বনিম্ন ৮০০">
+                <button class="btn-main" style="margin-top:15px;">রিকোয়েস্ট জমা দিন</button>
+            </div>
+        </div>
+
+        <div id="history" class="page">
+            <h4 style="text-align:center;"><i class="fa-solid fa-clock-rotate-left"></i> উইথড্র ইতিহাস</h4>
+            <div class="card" style="text-align: center; padding: 50px 20px;">
+                <i class="fa-solid fa-file-invoice-dollar" style="font-size: 50px; color: #444; margin-bottom: 15px;"></i>
+                <p>কোনো উইথড্র রেকর্ড পাওয়া যায়নি।</p>
+            </div>
+        </div>
     </div>
 
     <div class="bottom-nav">
         <div class="nav-item active" onclick="showPage('home', this)"><i class="fa-solid fa-house"></i>হোম</div>
+        <div class="nav-item" onclick="showPage('support', this)"><i class="fa-solid fa-headset"></i>সাপোর্ট</div>
         <div class="nav-item" onclick="showPage('tasks', this)"><i class="fa-solid fa-list-check"></i>টাস্ক</div>
         <div class="nav-item" onclick="showPage('withdraw', this)"><i class="fa-solid fa-wallet"></i>উইথড্র</div>
-        <div class="nav-item" onclick="showPage('support', this)"><i class="fa-solid fa-headset"></i>সাপোর্ট</div>
+        <div class="nav-item" onclick="showPage('history', this)"><i class="fa-solid fa-clock-rotate-left"></i>হিস্ট্রি</div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         const user = tg.initDataUnsafe?.user;
-        if (user) { document.getElementById('display-name').innerText = user.first_name; }
+        if (user) {
+            document.getElementById('display-name').innerText = user.first_name;
+            document.getElementById('user-initial').innerText = user.first_name.charAt(0);
+        }
 
         function showPage(pageId, element) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             element.classList.add('active');
+        }
+
+        function copyLink() {
+            const link = document.getElementById('ref-link');
+            link.select(); document.execCommand('copy');
+            alert("রেফার লিঙ্ক কপি হয়েছে!");
         }
     </script>
 </body>
