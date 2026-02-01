@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money Garden - Pro</title>
+    <title>Money Garden Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -24,7 +24,7 @@
             overflow: hidden;
         }
 
-        /* হেডার ডিজাইন - স্ক্রিনশট ১-৫ অনুযায়ী */
+        /* হেডার ডিজাইন */
         .user-header {
             background: var(--primary-gradient);
             padding: 20px; text-align: center;
@@ -50,7 +50,7 @@
             padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* টাস্ক কার্ড ডিজাইন - স্ক্রিনশট ৩ অনুযায়ী */
+        /* টাস্ক কার্ড */
         .task-card {
             background: var(--card-dark); border-radius: 20px;
             padding: 20px; margin-bottom: 20px; text-align: center;
@@ -61,13 +61,6 @@
             border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
             font-size: 24px; margin-bottom: 10px; color: #7c4dff;
         }
-        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-task {
-            flex: 1; padding: 12px; border-radius: 10px; border: none;
-            color: white; font-weight: bold; cursor: pointer;
-        }
-        .btn-open { background: #333; }
-        .btn-claim { background: #00bcd4; }
 
         .btn-main {
             background: var(--primary-gradient); border: none; color: white;
@@ -93,7 +86,7 @@
 
     <div class="user-header">
         <div class="avatar" id="user-initial">?</div>
-        <h4 id="display-name" style="margin:0;">লোড হচ্ছে...</h4>
+        <h4 id="display-name" style="margin:0;">টানু</h4>
         <div class="balance-badge">💰 ব্যালেন্স: <span class="user-balance">0.00</span> TAKA</div>
     </div>
 
@@ -103,7 +96,7 @@
                 <div class="card" style="text-align: center;">
                     <i class="fa-solid fa-rectangle-ad"></i>
                     <p style="font-size:12px; margin:0;">দৈনিক বিজ্ঞাপন</p>
-                    <b id="ads-count">0/10</b>
+                    <b id="ads-count">0/20</b>
                 </div>
                 <div class="card" style="text-align: center;">
                     <i class="fa-solid fa-users"></i>
@@ -114,7 +107,7 @@
             <div class="card">
                 <h4><i class="fa-solid fa-gift"></i> রেফার লিঙ্ক</h4>
                 <input type="text" id="ref-link" readonly>
-                <button class="btn-main" style="margin-top:10px;" onclick="copyLink()">কপি ও শেয়ার করুন</button>
+                <button class="btn-main" style="margin-top:10px;" onclick="copyLink()">কপি করুন</button>
             </div>
         </div>
 
@@ -124,8 +117,8 @@
                 <button class="btn-main" onclick="window.open('আপনার_ভিডিও_লিঙ্ক')"><i class="fa-solid fa-play"></i> ভিডিও দেখুন</button>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div class="card" style="text-align:center;" onclick="window.open('https://t.me/আপনার_বট_ইউজারনেম')"><i class="fa-brands fa-telegram" style="color:#248bcf;"></i><br>টেলিগ্রাম</div>
-                <div class="card" style="text-align:center;" onclick="location.href='mailto:আপনার_ইমেইল@gmail.com'"><i class="fa-solid fa-envelope" style="color:#f44336;"></i><br>ইমেইল</div>
+                <div class="card" style="text-align:center;" onclick="window.open('https://t.me/crypto_passbot')"><i class="fa-brands fa-telegram" style="color:#248bcf;"></i><br>টেলিগ্রাম</div>
+                <div class="card" style="text-align:center;" onclick="location.href='mailto:support@gmail.com'"><i class="fa-solid fa-envelope" style="color:#f44336;"></i><br>ইমেইল</div>
                 <div class="card" style="text-align:center;" onclick="window.open('আপনার_লাইভ_চ্যাট_লিঙ্ক')"><i class="fa-solid fa-comment-dots" style="color:#4caf50;"></i><br>লাইভ চ্যাট</div>
             </div>
         </div>
@@ -133,19 +126,9 @@
         <div id="tasks" class="page">
             <div class="task-card">
                 <div class="task-icon-bg"><i class="fa-solid fa-video"></i></div>
-                <div><b>বিজ্ঞাপন দেখুন</b></div>
+                <b>বিজ্ঞাপন দেখুন</b>
                 <div style="color:var(--green); font-weight:bold; margin:10px 0;">পুরস্কার: ২৫.০০ TAKA</div>
                 <button class="btn-main" onclick="showAd()">বিজ্ঞাপন দেখুন</button>
-            </div>
-            
-            <div class="task-card">
-                <div class="task-icon-bg"><i class="fa-brands fa-telegram"></i></div>
-                <div><b>টেলিগ্রাম চ্যানেল যোগ দিন</b></div>
-                <div style="color:var(--green); font-weight:bold; margin:10px 0;">পুরস্কার: ৪০.০০ TAKA</div>
-                <div class="btn-group">
-                    <button class="btn-task btn-open" onclick="window.open('আপনার_চ্যানেল_লিঙ্ক')">চ্যানেল ওপেন</button>
-                    <button class="btn-task btn-claim" onclick="claimTask(40)">চেক ও ক্লেইম</button>
-                </div>
             </div>
         </div>
 
@@ -172,11 +155,35 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
-        let balance = 0.00;
-        let adsSeen = 0;
 
-        // আপনার বটের ইউজারনেম এখানে দিন (যেমন: YourBot_bot)
+        // লোকাল স্টোরেজ থেকে ডেটা লোড
+        let balance = parseFloat(localStorage.getItem('userBalance')) || 0.00;
+        let refs = parseInt(localStorage.getItem('refCount')) || 0;
+        let ads = parseInt(localStorage.getItem('adsSeen')) || 0;
+
         const botUsername = "crypto_passbot"; 
+
+        // রেফার বোনাস চেক
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('startapp') && !localStorage.getItem('bonusTaken')) {
+            balance += 25.00; // রেফার বোনাস
+            refs += 1;
+            localStorage.setItem('bonusTaken', 'true');
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem('userBalance', balance);
+            localStorage.setItem('refCount', refs);
+            localStorage.setItem('adsSeen', ads);
+            updateUI();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.user-balance').forEach(el => el.innerText = balance.toFixed(2));
+            document.getElementById('ref-count').innerText = refs;
+            document.getElementById('ads-count').innerText = ads + "/20";
+        }
 
         const user = tg.initDataUnsafe?.user;
         if (user) {
@@ -193,33 +200,21 @@
         }
 
         function showAd() {
-            window.open('আপনার_ADSTERRA_বা_MONETAG_লিঙ্ক'); 
+            window.open('আপনার_ADSTERRA_লিঙ্ক'); 
             balance += 25.00;
-            adsSeen += 1;
-            updateUI();
-        }
-
-        function claimTask(reward) {
-            balance += reward;
-            updateUI();
-            alert("টাস্ক ক্লেইম সফল হয়েছে!");
-        }
-
-        function updateUI() {
-            document.querySelectorAll('.user-balance').forEach(el => el.innerText = balance.toFixed(2));
-            document.getElementById('ads-count').innerText = adsSeen + "/10";
+            ads += 1;
+            saveData();
         }
 
         function handleWithdraw() {
             const amount = parseFloat(document.getElementById('w-amount').value);
             if (amount < 800 || isNaN(amount)) {
-                alert("দুঃখিত, ন্যূনতম উত্তোলন ৮০০ টাকা।");
-                return;
+                alert("ন্যূনতম উত্তোলন ৮০০ টাকা।"); return;
             }
             if (balance >= amount) {
                 balance -= amount;
-                updateUI();
-                alert("উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে!");
+                saveData();
+                alert("উইথড্র রিকোয়েস্ট সফল হয়েছে!");
             } else {
                 alert("দুঃখিত! আপনার পর্যাপ্ত ব্যালেন্স নাই।");
             }
@@ -227,10 +222,11 @@
 
         function copyLink() {
             const link = document.getElementById('ref-link');
-            link.select();
-            document.execCommand('copy');
-            alert("আপনার রেফার লিঙ্ক কপি হয়েছে!");
+            link.select(); document.execCommand('copy');
+            alert("রেফার লিঙ্ক কপি হয়েছে!");
         }
+
+        updateUI();
     </script>
 </body>
     </html>
