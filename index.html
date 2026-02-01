@@ -91,6 +91,7 @@ body{
  background:linear-gradient(90deg,#b86adf,#ff8aa5);
  color:#fff;
  font-weight:bold;
+ cursor:pointer;
 }
 
 /* TASK */
@@ -173,7 +174,7 @@ input,select{
  <div class="card">
   <h4>রেফার লিংক</h4>
   <input id="ref-url" readonly>
-  <button class="btn" onclick="copyRef()">কপি করুন</button>
+  <button class="btn" id="copyRefBtn">কপি করুন</button>
  </div>
 </div>
 
@@ -181,10 +182,10 @@ input,select{
 <div id="support" class="page">
  <div class="card" style="text-align:center">
   <h3>সাপোর্ট</h3><br>
-  <button class="btn" onclick="window.open('https://t.me/YourSupportUsername')">
+  <button class="btn" id="tgSupport">
    <i class="fa-brands fa-telegram"></i> Telegram
   </button><br><br>
-  <button class="btn" onclick="location.href='mailto:support@yourmail.com'">
+  <button class="btn" id="mailSupport">
    <i class="fa-solid fa-envelope"></i> Email
   </button>
  </div>
@@ -194,12 +195,12 @@ input,select{
 <div id="tasks" class="page">
  <div class="card" style="text-align:center">
   <h3>চ্যানেল জয়েন</h3>
-  <button class="btn" onclick="joinChannel()">JOIN CHANNEL</button>
+  <button class="btn" id="joinChannelBtn">JOIN CHANNEL</button>
  </div>
 
  <div class="card" style="text-align:center">
   <h3>বিজ্ঞাপন দেখুন</h3>
-  <div class="play" onclick="watchAd()">
+  <div class="play" id="watchAdBtn">
    <i class="fa-solid fa-play"></i>
   </div>
   <p>প্রতি বিজ্ঞাপনে ২৫ টাকা</p>
@@ -221,7 +222,7 @@ input,select{
   </select>
   <input id="w-num" placeholder="আপনার নম্বর">
   <input id="w-amt" placeholder="মিনিমাম ৮০০">
-  <button class="btn" onclick="withdraw()">উইথড্র রিকোয়েস্ট</button>
+  <button class="btn" id="withdrawBtn">উইথড্র রিকোয়েস্ট</button>
  </div>
 </div>
 
@@ -229,71 +230,82 @@ input,select{
 
 <!-- NAV -->
 <div class="nav">
- <div class="nav-item active" onclick="showPage('home',this)">
+ <div class="nav-item active" data-page="home">
   <i class="fa-solid fa-house"></i>হোম
  </div>
- <div class="nav-item" onclick="showPage('support',this)">
+ <div class="nav-item" data-page="support">
   <i class="fa-solid fa-headset"></i>সাপোর্ট
  </div>
- <div class="nav-item" onclick="showPage('tasks',this)">
+ <div class="nav-item" data-page="tasks">
   <i class="fa-solid fa-tasks"></i>টাস্ক
  </div>
- <div class="nav-item" onclick="showPage('withdraw',this)">
+ <div class="nav-item" data-page="withdraw">
   <i class="fa-solid fa-wallet"></i>উইথড্র
  </div>
 </div>
 
 <script>
-/* FIREBASE CONFIG */
+/* ========= CONFIG ========= */
 firebase.initializeApp({
  databaseURL:"https://mini-bot-26c78-default-rtdb.firebaseio.com"
 });
-const db=firebase.database();
+const db = firebase.database();
 
-/* TELEGRAM */
-const tg=window.Telegram.WebApp;
+const tg = window.Telegram.WebApp;
 tg.ready();
-const user=tg.initDataUnsafe?.user;
-const uid=user?user.id:"demo";
+const user = tg.initDataUnsafe?.user;
+const uid = user ? user.id : "demo";
 
-/* LOAD USER */
+/* ========= LOAD USER ========= */
 db.ref("users/"+uid).on("value",s=>{
- let d=s.val()||{balance:0,ads:0,refs:0};
- top-bal.innerText=d.balance.toFixed(2);
- main-bal.innerText=d.balance.toFixed(2);
- ads-c.innerText=d.ads;
- refs-c.innerText=d.refs;
- u-name.innerText=user?.first_name||"User";
- u-initial.innerText=(user?.first_name||"U")[0];
- ref-url.value=`https://t.me/crypto_passbot/app?startapp=${uid}`;
+ const d = s.val() || {balance:0,ads:0,refs:0};
+ document.getElementById("top-bal").innerText = d.balance.toFixed(2);
+ document.getElementById("main-bal").innerText = d.balance.toFixed(2);
+ document.getElementById("ads-c").innerText = d.ads;
+ document.getElementById("refs-c").innerText = d.refs;
+ document.getElementById("u-name").innerText = user?.first_name || "User";
+ document.getElementById("u-initial").innerText = (user?.first_name || "U")[0];
+ document.getElementById("ref-url").value =
+  `https://t.me/crypto_passbot/app?startapp=${uid}`;
 });
 
-/* PAGE SWITCH */
-function showPage(id,el){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
- el.classList.add("active");
-}
+/* ========= NAV FIX ========= */
+document.querySelectorAll(".nav-item").forEach(item=>{
+ item.addEventListener("click",()=>{
+  const page = item.dataset.page;
 
-/* COPY REF */
-function copyRef(){
- ref-url.select();
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
+
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  item.classList.add("active");
+ });
+});
+
+/* ========= ACTIONS ========= */
+document.getElementById("copyRefBtn").onclick=()=>{
+ document.getElementById("ref-url").select();
  document.execCommand("copy");
  tg.showAlert("লিংক কপি হয়েছে");
-}
+};
 
-/* JOIN CHANNEL */
-function joinChannel(){
- window.open("https://t.me/YourChannelUsername","_blank");
-}
+document.getElementById("tgSupport").onclick=()=>{
+ window.open("https://t.me/YourSupportUsername");
+};
 
-/* WATCH AD (Adsterra / Monetag Zone এখানে বসাও) */
-function watchAd(){
- // show_XXXXXXX(); // ← তোমার Monetag / Adsterra Zone ID
+document.getElementById("mailSupport").onclick=()=>{
+ location.href="mailto:support@yourmail.com";
+};
+
+document.getElementById("joinChannelBtn").onclick=()=>{
+ window.open("https://t.me/YourChannelUsername");
+};
+
+document.getElementById("watchAdBtn").onclick=()=>{
+ // Monetag / Adsterra Zone এখানে বসাবে
  setTimeout(()=>{
   db.ref("users/"+uid).once("value",s=>{
-   let d=s.val()||{balance:0,ads:0};
+   const d=s.val();
    db.ref("users/"+uid).update({
     balance:d.balance+25,
     ads:d.ads+1
@@ -301,23 +313,23 @@ function watchAd(){
    tg.showAlert("২৫ টাকা যোগ হয়েছে");
   });
  },5000);
-}
+};
 
-/* WITHDRAW */
-function withdraw(){
- const amt=parseFloat(w-amt.value);
- const num=w-num.value;
- if(!amt||!num)return tg.showAlert("সব তথ্য দিন");
+document.getElementById("withdrawBtn").onclick=()=>{
+ const amt=parseFloat(document.getElementById("w-amt").value);
+ const num=document.getElementById("w-num").value;
+
+ if(!amt||!num) return tg.showAlert("সব তথ্য দিন");
 
  db.ref("users/"+uid).once("value",s=>{
-  let bal=s.val().balance;
-  if(amt<800)return tg.showAlert("মিনিমাম ৮০০ টাকা");
-  if(bal<amt)return tg.showAlert("দুঃখিত আপনার পর্যাপ্ত ব্যালেন্স নেই");
+  const bal=s.val().balance;
+  if(amt<800) return tg.showAlert("মিনিমাম ৮০০ টাকা");
+  if(bal<amt) return tg.showAlert("দুঃখিত আপনার পর্যাপ্ত ব্যালেন্স নেই");
 
   db.ref("users/"+uid).update({balance:bal-amt});
   tg.showAlert("উইথড্র সফল হয়েছে");
  });
-}
+};
 </script>
 
 </body>
