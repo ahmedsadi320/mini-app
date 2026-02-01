@@ -50,18 +50,6 @@
             padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* টাস্ক কার্ড */
-        .task-card {
-            background: var(--card-dark); border-radius: 20px;
-            padding: 20px; margin-bottom: 20px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .task-icon-bg {
-            width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-            font-size: 24px; margin-bottom: 10px; color: #7c4dff;
-        }
-
         .btn-main {
             background: var(--primary-gradient); border: none; color: white;
             padding: 12px; border-radius: 10px; width: 100%; font-weight: bold;
@@ -86,7 +74,7 @@
 
     <div class="user-header">
         <div class="avatar" id="user-initial">?</div>
-        <h4 id="display-name" style="margin:0;">টানু</h4>
+        <h4 id="display-name" style="margin:0;">লোড হচ্ছে...</h4>
         <div class="balance-badge">💰 ব্যালেন্স: <span class="user-balance">0.00</span> TAKA</div>
     </div>
 
@@ -119,15 +107,14 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div class="card" style="text-align:center;" onclick="window.open('https://t.me/crypto_passbot')"><i class="fa-brands fa-telegram" style="color:#248bcf;"></i><br>টেলিগ্রাম</div>
                 <div class="card" style="text-align:center;" onclick="location.href='mailto:support@gmail.com'"><i class="fa-solid fa-envelope" style="color:#f44336;"></i><br>ইমেইল</div>
-                <div class="card" style="text-align:center;" onclick="window.open('আপনার_লাইভ_চ্যাট_লিঙ্ক')"><i class="fa-solid fa-comment-dots" style="color:#4caf50;"></i><br>লাইভ চ্যাট</div>
             </div>
         </div>
 
         <div id="tasks" class="page">
-            <div class="task-card">
-                <div class="task-icon-bg"><i class="fa-solid fa-video"></i></div>
-                <b>বিজ্ঞাপন দেখুন</b>
-                <div style="color:var(--green); font-weight:bold; margin:10px 0;">পুরস্কার: ২৫.০০ TAKA</div>
+            <div class="card" style="text-align: center; padding: 20px;">
+                <i class="fa-solid fa-video" style="font-size: 40px; color: #7c4dff;"></i>
+                <div style="margin: 10px 0;"><b>বিজ্ঞাপন দেখে আয়</b></div>
+                <div style="color:var(--green); font-weight:bold; margin-bottom:15px;">পুরস্কার: ২৫.০০ TAKA</div>
                 <button class="btn-main" onclick="showAd()">বিজ্ঞাপন দেখুন</button>
             </div>
         </div>
@@ -135,11 +122,10 @@
         <div id="withdraw" class="page">
             <div class="card">
                 <h4 style="text-align:center;">টাকা উত্তোলন</h4>
-                <p style="text-align:center; font-size:12px; color:var(--green);">ন্যূনতম উত্তোলন: ৮০০ টাকা</p>
                 <label>পদ্ধতি:</label>
                 <select id="method"><option>বিকাশ</option><option>নগদ</option></select>
-                <input type="number" id="w-num" placeholder="পার্সোনাল নম্বর">
-                <input type="number" id="w-amount" placeholder="পরিমাণ (৮০০-এর বেশি)">
+                <input type="number" id="w-num" placeholder="নম্বর দিন">
+                <input type="number" id="w-amount" placeholder="পরিমাণ (৮০০+)">
                 <button class="btn-main" style="margin-top:15px;" onclick="handleWithdraw()">রিকোয়েস্ট পাঠান</button>
             </div>
         </div>
@@ -156,40 +142,46 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
-        // লোকাল স্টোরেজ থেকে ডেটা লোড
-        let balance = parseFloat(localStorage.getItem('userBalance')) || 0.00;
-        let refs = parseInt(localStorage.getItem('refCount')) || 0;
-        let ads = parseInt(localStorage.getItem('adsSeen')) || 0;
-
+        const user = tg.initDataUnsafe?.user;
+        const userId = user ? user.id : 'guest';
         const botUsername = "crypto_passbot"; 
 
-        // রেফার বোনাস চেক
+        // ইউজার আইডি অনুযায়ী আলাদা স্টোরেজ কী (যাতে একই ফোনে আইডি পাল্টালে কাজ করে)
+        const storageKey = `user_data_${userId}`;
+        let userData = JSON.parse(localStorage.getItem(storageKey)) || {
+            balance: 0.00,
+            refs: 0,
+            ads: 0,
+            bonusTaken: false
+        };
+
+        // রেফার বোনাস লজিক
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('startapp') && !localStorage.getItem('bonusTaken')) {
-            balance += 25.00; // রেফার বোনাস
-            refs += 1;
-            localStorage.setItem('bonusTaken', 'true');
+        const startParam = urlParams.get('startapp');
+
+        // যদি রেফার লিঙ্কে ক্লিক করে আসে এবং এই আইডিতে আগে বোনাস না নেয়
+        if (startParam && !userData.bonusTaken) {
+            userData.balance += 25.00;
+            userData.refs += 1;
+            userData.bonusTaken = true;
             saveData();
         }
 
         function saveData() {
-            localStorage.setItem('userBalance', balance);
-            localStorage.setItem('refCount', refs);
-            localStorage.setItem('adsSeen', ads);
+            localStorage.setItem(storageKey, JSON.stringify(userData));
             updateUI();
         }
 
         function updateUI() {
-            document.querySelectorAll('.user-balance').forEach(el => el.innerText = balance.toFixed(2));
-            document.getElementById('ref-count').innerText = refs;
-            document.getElementById('ads-count').innerText = ads + "/20";
+            document.querySelectorAll('.user-balance').forEach(el => el.innerText = userData.balance.toFixed(2));
+            document.getElementById('ref-count').innerText = userData.refs;
+            document.getElementById('ads-count').innerText = userData.ads + "/20";
         }
 
-        const user = tg.initDataUnsafe?.user;
         if (user) {
             document.getElementById('display-name').innerText = user.first_name;
             document.getElementById('user-initial').innerText = user.first_name.charAt(0);
-            document.getElementById('ref-link').value = `https://t.me/${botUsername}/app?startapp=${user.id}`;
+            document.getElementById('ref-link').value = `https://t.me/${botUsername}/app?startapp=${userId}`;
         }
 
         function showPage(pageId, element) {
@@ -201,8 +193,8 @@
 
         function showAd() {
             window.open('আপনার_ADSTERRA_লিঙ্ক'); 
-            balance += 25.00;
-            ads += 1;
+            userData.balance += 25.00;
+            userData.ads += 1;
             saveData();
         }
 
@@ -211,10 +203,10 @@
             if (amount < 800 || isNaN(amount)) {
                 alert("ন্যূনতম উত্তোলন ৮০০ টাকা।"); return;
             }
-            if (balance >= amount) {
-                balance -= amount;
+            if (userData.balance >= amount) {
+                userData.balance -= amount;
                 saveData();
-                alert("উইথড্র রিকোয়েস্ট সফল হয়েছে!");
+                alert("উইথড্র সফল! ব্যালেন্স কেটে নেওয়া হয়েছে।");
             } else {
                 alert("দুঃখিত! আপনার পর্যাপ্ত ব্যালেন্স নাই।");
             }
@@ -229,4 +221,4 @@
         updateUI();
     </script>
 </body>
-    </html>
+</html>
