@@ -11,9 +11,12 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;}
 body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
+
+/* header */
 .header{background:linear-gradient(135deg,#a569bd,#f1948a);padding:30px 20px;border-radius:0 0 30px 30px;text-align:center;border-bottom:2px solid #00ffa3;margin-bottom:15px;}
 .p-circle{width:75px;height:75px;border-radius:50%;background:#58d68d;border:3px solid #fff;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:white;}
 .bal-badge{background:rgba(255,255,255,0.2);padding:8px 25px;border-radius:50px;font-size:15px;display:inline-block;margin-top:10px;border:1px solid rgba(255,255,255,0.3);}
+
 .container{padding:15px;}
 .page{display:none;}
 .page.active{display:block;}
@@ -32,11 +35,17 @@ body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
 .nav-item{flex:1;text-align:center;color:#6e6f8a;font-size:12px;cursor:pointer;}
 .nav-item.active{color:#bb8fce;}
 .nav-item i{font-size:22px;margin-bottom:4px;display:block;}
+
+/* Task Page Styling */
+.task-card{background:#1c1d38;border-radius:20px;padding:15px;border:1px solid #2d2e4d;margin-bottom:12px;text-align:center;}
+.task-card h4{margin-bottom:6px;font-size:14px;}
+.task-card p{font-size:12px;color:#aaa;margin-bottom:8px;}
+.task-card button{background:linear-gradient(135deg,#bb8fce,#f1948a);border:none;color:#fff;padding:8px 0;border-radius:12px;width:100%;cursor:pointer;font-weight:bold;}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- HEADER (HOME + SUPPORT same) -->
 <div class="header">
  <div class="p-circle" id="u-initial">?</div>
  <div style="font-size:20px; font-weight:bold;" id="u-name">User</div>
@@ -73,26 +82,17 @@ body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
   <h3>টিউটোরিয়াল ভিডিও</h3>
   <button class="task-btn" onclick="window.open('https://t.me/YOUR_SUPPORT')">ভিডিও দেখুন</button>
  </div>
- <div class="task-grid">
-  <div class="task-mini" onclick="window.open('https://t.me/YOUR_SUPPORT')">
-   <i class="fa-brands fa-telegram"></i><br>টেলিগ্রাম
-  </div>
-  <div class="task-mini" onclick="location.href='mailto:yourmail@example.com'">
-   <i class="fa-solid fa-envelope"></i><br>ইমেইল
-  </div>
-  <div class="task-mini" onclick="window.open('https://t.me/YOUR_CHAT')">
-   <i class="fa-solid fa-comment"></i><br>লাইভ চ্যাট
-  </div>
-  <div class="task-mini" onclick="alert('FAQ content এখানে লিখুন')">
-   <i class="fa-solid fa-question"></i><br>FAQ
-  </div>
- </div>
 </div>
 
 <!-- TASK PAGE -->
 <div id="tasks" class="page">
- <div class="task-grid" id="task-list">
-  <!-- JS দিয়ে ৯টি অ্যাড বোতাম তৈরি হবে -->
+ <div id="task-list">
+  <!-- ৯টি Ad Task JS থেকে generate হবে -->
+ </div>
+ <div class="task-card">
+  <h4>চ্যানেল জয়েন টাস্ক</h4>
+  <p>Join our Telegram Channel + 40 টাকা</p>
+  <button onclick="joinChannelTask()">JOIN CHANNEL</button>
  </div>
 </div>
 
@@ -127,11 +127,10 @@ tg.ready();
 tg.expand();
 const user = tg.initDataUnsafe?.user || {id:'test',first_name:'User'};
 const uid = user.id;
-
-let data = {balance:0,ads:0,refs:0};
+let data = {balance:0,ads:0,refs:0,joined:false};
 
 document.getElementById('u-name').innerText = user.first_name;
-document.getElementById('u-initial').innerText = user.first_name.charAt(0);
+document.getElementById('u-initial').innerText = user.first_name[0];
 document.getElementById('ref-url').value = `https://t.me/crypto_passbot?start=${uid}`;
 updateUI();
 
@@ -154,31 +153,40 @@ document.getElementById('copyRefBtn').onclick=()=>{
  tg.showAlert("কপি হয়েছে!");
 };
 
-/* TASK LIST GENERATE */
+/* TASK LIST GENERATE (৯ Ad Task) */
 const taskList=document.getElementById('task-list');
 for(let i=1;i<=9;i++){
  let div=document.createElement('div');
- div.className='card';
- div.innerHTML=`<h4>বিজ্ঞাপন ${i}</h4><p>দেখুন এবং ২০ টাকা পান</p><button class="btn" onclick="watchAd(${i})">Watch Ad</button>`;
+ div.className='task-card';
+ div.innerHTML=`<h4>বিজ্ঞাপন ${i}</h4>
+ <p>পুরো না দেখলে টাকা পাবেন না</p>
+ <button onclick="watchAd(${i},this)">▶ Watch Ad</button>`;
  taskList.appendChild(div);
 }
 
 /* WATCH AD */
-function watchAd(i){
+function watchAd(i,btn){
+ btn.disabled=true;
+ btn.innerText='Watching...';
+ // Simulate Ad watching
  setTimeout(()=>{
-   data.balance+=20;
    data.ads++;
+   data.balance+=20;
    updateUI();
    tg.showAlert("২০ টাকা যোগ হয়েছে!");
- },2000); // এড দেখার সময়
+   btn.innerText='▶ Watch Ad';
+   btn.disabled=false;
+ },5000); // ৫ সেকেন্ড পরে balance যোগ হবে
 }
 
-/* JOIN CHANNEL TASK */
+/* CHANNEL JOIN TASK */
 function joinChannelTask(){
+ if(data.joined) return;
  window.open("https://t.me/YOUR_CHANNEL","_blank");
  data.balance+=40;
-updateUI();
-tg.showAlert("৪০ টাকা যোগ হয়েছে!");
+ data.joined=true;
+ updateUI();
+ tg.showAlert("৪০ টাকা যোগ হয়েছে!");
 }
 
 /* UPDATE UI */
