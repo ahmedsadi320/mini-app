@@ -11,7 +11,7 @@
     
     <style>
         :root { --bg: #12122b; --card: #1e1e3d; --grad: linear-gradient(90deg, #ff4081, #7c4dff); }
-        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding-bottom: 80px; }
         .header { background: var(--grad); padding: 25px; text-align: center; border-radius: 0 0 30px 30px; }
         .balance-badge { background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; font-size: 14px; display: inline-block; margin-top: 10px; }
         .card { background: var(--card); margin: 15px; padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
@@ -57,7 +57,7 @@
 </div>
 
 <script>
-    // আপনার ফায়ারবেস কনফিগ
+    // আপনার ফায়ারবেস কনফিগ (স্ক্রিনশট ১২৯৬৪ থেকে নেওয়া)
     const firebaseConfig = {
         apiKey: "AIzaSyBjuU8_Iz0VQ1mnIdLk6kcP0IffEBpmUPo",
         authDomain: "mini-bot-26c78.firebaseapp.com",
@@ -74,23 +74,22 @@
     tg.ready();
 
     const user = tg.initDataUnsafe?.user;
-    const uid = user ? user.id : "guest_" + Math.floor(Math.random() * 1000);
+    const uid = user ? user.id : "guest_user";
     const botUser = "crypto_passbot";
 
-    let userData = { balance: 0, refs: 0, ads: 0, bonusTaken: false };
+    let userData = { balance: 0, refs: 0, ads: 0 };
 
-    // ডাটাবেস থেকে ডাটা লোড করা
+    // ডাটাবেস থেকে ডাটা লোড ও রেফার লজিক
     const userRef = db.ref('users/' + uid);
     userRef.on('value', (snap) => {
         if (snap.exists()) {
             userData = snap.val();
         } else {
-            // নতুন ইউজার হলে রেফার চেক করা
             const params = new URLSearchParams(window.location.search);
             const refBy = params.get('startapp');
             
             if (refBy && refBy != uid) {
-                // যে রেফার করেছে তাকে ২৫ টাকা দেওয়া
+                // রেফারারকে বোনাস
                 db.ref('users/' + refBy).once('value', (s) => {
                     if (s.exists()) {
                         let d = s.val();
@@ -100,9 +99,8 @@
                         });
                     }
                 });
-                userData.balance = 25; // নতুন ইউজার নিজেও ২৫ পাবে
+                userData.balance = 25; // নতুন ইউজার বোনাস পাবে
             }
-            userData.bonusTaken = true;
             userRef.set(userData);
         }
         renderUI();
@@ -117,7 +115,7 @@
     }
 
     function watchAd() {
-        window.open('আপনার_বিজ্ঞাপন_লিঙ্ক'); // এখানে আপনার Adsterra লিঙ্ক দিন
+        window.open('আপনার_লিঙ্ক'); 
         userData.balance = (userData.balance || 0) + 25;
         userData.ads = (userData.ads || 0) + 1;
         userRef.update(userData);
@@ -134,7 +132,7 @@
         const copyText = document.getElementById("ref-link");
         copyText.select();
         document.execCommand("copy");
-        tg.showAlert("রেফার লিঙ্ক কপি হয়েছে!");
+        alert("লিঙ্ক কপি হয়েছে!");
     }
 </script>
 </body>
