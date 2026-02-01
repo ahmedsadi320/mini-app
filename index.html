@@ -2,78 +2,84 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Money Garden</title>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+*{
+ margin:0;padding:0;box-sizing:border-box;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+}
 body{
- background:linear-gradient(180deg,#0f1220,#1a1f3c);
+ background:linear-gradient(180deg,#0b0f25,#161b3a);
  color:#fff;
 }
 
-.page{display:none;padding:16px 14px 90px}
+/* pages */
+.page{display:none;padding:14px 14px 90px}
 .page.active{display:block}
 
 /* header */
 .header{
- background:linear-gradient(135deg,#ff6aa2,#9c6bff);
+ background:linear-gradient(135deg,#ff6fae,#9b6cff);
+ border-radius:18px;
  padding:14px;
- border-radius:16px;
  display:flex;
  align-items:center;
  gap:10px;
- margin-bottom:12px;
 }
 .avatar{
- width:42px;height:42px;
+ width:44px;height:44px;
  border-radius:50%;
- background:#3ddc84;
- display:flex;align-items:center;justify-content:center;
- font-weight:bold;
+ background:#2ecc71;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-weight:700;
 }
-.balance{
- font-size:13px;
- opacity:.9;
-}
+.name{font-size:15px;font-weight:600}
+.balance{font-size:13px;opacity:.9}
 
 /* cards */
 .card{
- background:#1c203f;
+ background:#1b2046;
  border-radius:16px;
  padding:14px;
- margin-bottom:12px;
- box-shadow:0 6px 16px rgba(0,0,0,.4);
+ margin-top:12px;
+ box-shadow:0 6px 18px rgba(0,0,0,.4);
 }
 .card h3{font-size:15px;margin-bottom:6px}
 .card p{font-size:12px;opacity:.8}
 
-/* ad card */
-.ad-btn{
- background:linear-gradient(135deg,#ff6aa2,#9c6bff);
- border:none;
+/* button */
+.btn{
  width:100%;
  padding:12px;
- border-radius:12px;
+ border:none;
+ border-radius:14px;
+ background:linear-gradient(135deg,#ff6fae,#9b6cff);
  color:#fff;
  font-weight:600;
  margin-top:10px;
 }
 
-/* task list */
+/* task row */
 .task{
  display:flex;
  justify-content:space-between;
  align-items:center;
- margin-top:10px;
+ background:#12163a;
  padding:10px;
- background:#151938;
  border-radius:12px;
+ margin-top:8px;
 }
+.task small{opacity:.7}
 .task button{
- background:#00e0ff;
+ background:#00e5ff;
  border:none;
- padding:6px 10px;
+ padding:6px 12px;
  border-radius:8px;
  font-size:12px;
 }
@@ -85,7 +91,7 @@ input{
  margin-top:8px;
  border-radius:10px;
  border:none;
- background:#11152e;
+ background:#0e1230;
  color:#fff;
 }
 
@@ -93,16 +99,19 @@ input{
 .nav{
  position:fixed;
  bottom:0;left:0;right:0;
- background:#0c0f24;
+ background:#0a0d23;
  display:flex;
  justify-content:space-around;
- padding:10px 0;
+ padding:8px 0;
 }
 .nav div{
  font-size:12px;
  opacity:.6;
 }
-.nav .active{opacity:1;color:#ff7bdc}
+.nav .active{
+ opacity:1;
+ color:#ff7bdc;
+}
 </style>
 </head>
 
@@ -111,21 +120,21 @@ input{
 <!-- HOME -->
 <div id="home" class="page active">
  <div class="header">
-  <div class="avatar">T</div>
+  <div class="avatar" id="av">U</div>
   <div>
-   <b>Tanu</b>
-   <div class="balance">ব্যালেন্স: <span id="bal">45.00</span> TAKA</div>
+   <div class="name" id="uname">User</div>
+   <div class="balance">ব্যালেন্স: <span id="bal">0</span> TAKA</div>
   </div>
  </div>
 
  <div class="card">
   <h3>ভিডিও দেখে আয় করুন</h3>
   <p>একটি বিজ্ঞাপন সম্পূর্ণ দেখলে ২০ টাকা যোগ হবে</p>
-  <button class="ad-btn" onclick="watchAd()">▶ ভিডিও দেখুন</button>
+  <button class="btn" onclick="watchAd()">▶ ভিডিও দেখুন</button>
  </div>
 
  <div class="card">
-  <h3>চ্যানেল জয়েন</h3>
+  <h3>অন্যান্য টাস্ক</h3>
   <div class="task">
    <span>Telegram Channel</span>
    <button onclick="joinChannel()">JOIN</button>
@@ -140,26 +149,25 @@ input{
 
   <div class="task">
    <span>Ad Watch</span>
-   <button onclick="watchAd()">Start</button>
+   <small>+20</small>
   </div>
 
   <div class="task">
    <span>Referral</span>
-   <button>Invite</button>
+   <small><b id="refs">0</b> জন</small>
   </div>
-
  </div>
 </div>
 
 <!-- WITHDRAW -->
 <div id="withdraw" class="page">
  <div class="card">
-  <h3>Withdraw</h3>
-  <p>Minimum 800 TAKA</p>
+  <h3>টাকা উত্তোলন</h3>
+  <p>ন্যূনতম ৮০০ টাকা</p>
 
-  <input placeholder="Number">
-  <input placeholder="Amount">
-  <button class="ad-btn">রিকোয়েস্ট পাঠান</button>
+  <input id="num" placeholder="নাম্বার">
+  <input id="amt" placeholder="Amount (TAKA)">
+  <button class="btn" onclick="withdraw()">রিকোয়েস্ট পাঠান</button>
  </div>
 </div>
 
@@ -171,8 +179,25 @@ input{
 </div>
 
 <script>
-let balance=45;
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
+/* USER DATA */
+let user = {
+ name: tg.initDataUnsafe?.user?.first_name || "User",
+ balance: 0,
+ ads: 0,
+ refs: 0,
+ joined:false
+};
+
+/* INIT */
+document.getElementById("uname").innerText = user.name;
+document.getElementById("av").innerText = user.name[0];
+updateUI();
+
+/* NAV */
 function show(id,el){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
  document.getElementById(id).classList.add('active');
@@ -180,16 +205,49 @@ function show(id,el){
  el.classList.add('active');
 }
 
-function watchAd(){
- alert("👉 এখানে Adsterra / Monetag Ad বসবে");
- balance+=20;
- document.getElementById('bal').innerText=balance.toFixed(2);
+/* UPDATE UI */
+function updateUI(){
+ document.getElementById("bal").innerText = user.balance;
+ document.getElementById("refs").innerText = user.refs;
 }
 
+/* AD */
+function watchAd(){
+ // 👉 এখানে Adsterra / Monetag বসবে
+ alert("এখানে আসল বিজ্ঞাপন দেখাবে");
+
+ setTimeout(()=>{
+  user.ads++;
+  user.balance += 20;
+  updateUI();
+ },8000);
+}
+
+/* CHANNEL */
 function joinChannel(){
- window.open("https://t.me/your_channel","_blank");
- balance+=40;
- document.getElementById('bal').innerText=balance.toFixed(2);
+ if(user.joined) return;
+ window.open("https://t.me/YOUR_CHANNEL","_blank");
+ user.joined = true;
+ user.balance += 40;
+ updateUI();
+}
+
+/* WITHDRAW */
+function withdraw(){
+ let a = +amt.value;
+ let n = num.value;
+
+ if(!a || !n){
+  return tg.showAlert("সব তথ্য পূরণ করুন");
+ }
+
+ if(user.balance < a){
+  return tg.showAlert("পর্যাপ্ত ব্যালেন্স নাই");
+ }
+
+ user.balance -= a;
+ updateUI();
+ tg.showAlert("রিকোয়েস্ট গ্রহণ করা হয়েছে");
 }
 </script>
 
