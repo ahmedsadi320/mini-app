@@ -18,36 +18,35 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
- font-family:'Segoe UI',sans-serif;
- background:linear-gradient(180deg,#0b0c1e,#10122a);
+ font-family:Segoe UI,sans-serif;
+ background:#0b0c1e;
  color:#fff;
- padding-bottom:85px;
+ padding-bottom:90px;
 }
 
 /* HEADER */
 .header{
  background:linear-gradient(135deg,#a569bd,#f1948a);
  padding:30px 20px;
- border-radius:0 0 30px 30px;
  text-align:center;
+ border-radius:0 0 30px 30px;
 }
 .avatar{
  width:70px;height:70px;
- background:#58d68d;
  border-radius:50%;
- margin:auto;
+ background:#58d68d;
  display:flex;
  align-items:center;
  justify-content:center;
- font-size:30px;
- font-weight:bold;
+ font-size:28px;
+ margin:auto;
 }
-.balance-badge{
- margin-top:10px;
- background:rgba(255,255,255,.25);
+.badge{
+ background:rgba(255,255,255,.3);
+ display:inline-block;
  padding:8px 20px;
  border-radius:30px;
- display:inline-block;
+ margin-top:10px;
 }
 
 /* PAGE */
@@ -57,8 +56,8 @@ body{
 /* CARD */
 .card{
  background:#1c1d38;
- border-radius:20px;
- padding:18px;
+ border-radius:18px;
+ padding:15px;
  border:1px solid #2d2e4d;
  margin-bottom:15px;
 }
@@ -84,6 +83,7 @@ body{
  -webkit-text-fill-color:transparent;
 }
 
+/* BUTTON */
 .btn{
  background:linear-gradient(90deg,#bb8fce,#f1948a);
  border:none;
@@ -111,8 +111,8 @@ input,select{
  position:fixed;
  bottom:0;
  width:100%;
- background:#1c1d38;
  display:flex;
+ background:#1c1d38;
  border-top:1px solid #2d2e4d;
 }
 .nav div{
@@ -121,6 +121,7 @@ input,select{
  padding:10px;
  font-size:12px;
  color:#777;
+ cursor:pointer;
 }
 .nav .active{color:#bb8fce}
 .nav i{display:block;font-size:20px;margin-bottom:4px}
@@ -131,9 +132,9 @@ input,select{
 
 <!-- HEADER -->
 <div class="header">
- <div class="avatar" id="u-initial">U</div>
- <h3 id="u-name">User</h3>
- <div class="balance-badge">ব্যালেন্স: <span id="bal">0</span> TK</div>
+ <div class="avatar" id="uInitial">U</div>
+ <h3 id="uName">User</h3>
+ <div class="badge">ব্যালেন্স: <span id="balance">0</span> TK</div>
 </div>
 
 <!-- HOME -->
@@ -142,12 +143,12 @@ input,select{
   <div class="box">
    <i class="fa-solid fa-rectangle-ad"></i>
    <p>বিজ্ঞাপন</p>
-   <b id="ads">0/9</b>
+   <b id="adsCount">0/9</b>
   </div>
   <div class="box">
    <i class="fa-solid fa-users"></i>
    <p>রেফার</p>
-   <b id="refs">0</b>
+   <b id="refsCount">0</b>
   </div>
  </div>
 
@@ -181,27 +182,24 @@ input,select{
 
  <div class="grid">
   <!-- 9 ADS -->
-  <script>
-   for(let i=1;i<=9;i++){
-    document.write(`
-     <div class="box">
-      <i class="fa-solid fa-play"></i>
-      <p>Ad ${i}</p>
-      <button class="btn" onclick="watchAd()">স্টার্ট</button>
-     </div>
-    `)
-   }
-  </script>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 1</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 2</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 3</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 4</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 5</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 6</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 7</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 8</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
+  <div class="box"><i class="fa fa-play"></i><p>Ad 9</p><button class="btn" onclick="watchAd()">স্টার্ট</button></div>
  </div>
 </div>
 
 <!-- WITHDRAW -->
 <div id="withdraw" class="page">
  <div class="card" style="text-align:center">
-  <h1 id="mainBal">0</h1>
+  <h1 id="mainBalance">0</h1>
   <small>TAKA</small>
  </div>
-
  <div class="card">
   <select id="method">
    <option>bKash</option>
@@ -215,10 +213,10 @@ input,select{
 
 <!-- NAV -->
 <div class="nav">
- <div class="active" onclick="show('home')"><i class="fa fa-home"></i>Home</div>
- <div onclick="show('support')"><i class="fa fa-headset"></i>Support</div>
- <div onclick="show('task')"><i class="fa fa-tasks"></i>Task</div>
- <div onclick="show('withdraw')"><i class="fa fa-wallet"></i>Withdraw</div>
+ <div class="active" onclick="showPage('home',this)"><i class="fa fa-home"></i>Home</div>
+ <div onclick="showPage('support',this)"><i class="fa fa-headset"></i>Support</div>
+ <div onclick="showPage('task',this)"><i class="fa fa-tasks"></i>Task</div>
+ <div onclick="showPage('withdraw',this)"><i class="fa fa-wallet"></i>Withdraw</div>
 </div>
 
 <script>
@@ -234,15 +232,15 @@ tg.ready();
 const user=tg.initDataUnsafe.user;
 const uid=user.id;
 
-/* LOAD */
+/* LOAD USER */
 db.ref("users/"+uid).on("value",s=>{
  let d=s.val()||{balance:0,ads:0,refs:0};
- bal.innerText=d.balance;
- mainBal.innerText=d.balance;
- ads.innerText=d.ads+"/9";
- refs.innerText=d.refs;
- u-name.innerText=user.first_name;
- u-initial.innerText=user.first_name[0];
+ balance.innerText=d.balance;
+ mainBalance.innerText=d.balance;
+ adsCount.innerText=d.ads+"/9";
+ refsCount.innerText=d.refs;
+ uName.innerText=user.first_name;
+ uInitial.innerText=user.first_name[0];
  refLink.value=`https://t.me/YOUR_BOT?start=${uid}`;
 });
 
@@ -259,49 +257,67 @@ if(ref && ref!=uid){
  });
 }
 
-/* FUNCTIONS */
-function show(p){
- document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
- document.getElementById(p).classList.add('active');
- document.querySelectorAll('.nav div').forEach(x=>x.classList.remove('active'));
- event.currentTarget.classList.add('active');
+/* NAV */
+function showPage(p,el){
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ document.getElementById(p).classList.add("active");
+ document.querySelectorAll(".nav div").forEach(x=>x.classList.remove("active"));
+ el.classList.add("active");
 }
 
+/* UTIL */
+function openLink(l){window.open(l)}
 function copyRef(){
  refLink.select();
  document.execCommand("copy");
  tg.showAlert("কপি হয়েছে");
 }
 
+/* AD SECTION
+👉 এখানেই তোমার Adsterra / Monetag link বসাবে
+*/
 function watchAd(){
- db.ref("users/"+uid).once("value",s=>{
-  let d=s.val();
-  if(d.ads>=9) return tg.showAlert("আজ শেষ");
-  db.ref("users/"+uid).update({balance:d.balance+20,ads:d.ads+1});
-  tg.showAlert("২০ টাকা যোগ হয়েছে");
- });
+ // উদাহরণ:
+ // window.open("https://YOUR_AD_LINK","_blank");
+
+ setTimeout(()=>{
+  db.ref("users/"+uid).once("value",s=>{
+   let d=s.val();
+   if(d.ads>=9) return tg.showAlert("আজকের এড শেষ");
+   db.ref("users/"+uid).update({
+    balance:d.balance+20,
+    ads:d.ads+1
+   });
+   tg.showAlert("২০ টাকা যোগ হয়েছে");
+  });
+ },8000);
 }
 
+/* CHANNEL */
 function joinChannel(){
- window.open("https://t.me/YOUR_CHANNEL");
+ window.open("https://t.me/YOUR_CHANNEL","_blank");
  db.ref("users/"+uid).once("value",s=>{
   if(s.val()?.joined) return;
-  db.ref("users/"+uid).update({balance:s.val().balance+40,joined:true});
+  db.ref("users/"+uid).update({
+   balance:s.val().balance+40,
+   joined:true
+  });
+  tg.showAlert("৪০ টাকা যোগ হয়েছে");
  });
 }
 
+/* WITHDRAW */
 function withdraw(){
  let a=+amount.value;
  let n=number.value;
- if(!a||!n) return;
+ if(!a||!n) return tg.showAlert("সব তথ্য পূরণ করুন");
  db.ref("users/"+uid).once("value",s=>{
-  if(s.val().balance<a) return tg.showAlert("দুঃখিত আপনার পর্যাপ্ত ব্যালেন্স নাই");
-  db.ref("users/"+uid).update({balance:s.val().balance-a});
+  let bal=s.val().balance;
+  if(bal<a) return tg.showAlert("দুঃখিত আপনার পর্যাপ্ত ব্যালেন্স নাই");
+  db.ref("users/"+uid).update({balance:bal-a});
   tg.showAlert("রিকোয়েস্ট সফল");
  });
 }
-
-function openLink(l){window.open(l)}
 </script>
 
 </body>
