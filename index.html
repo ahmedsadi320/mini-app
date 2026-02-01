@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Money Garden Pro</title>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<!-- Telegram -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -17,24 +24,23 @@ body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
 .p-circle{width:75px;height:75px;border-radius:50%;background:#58d68d;border:3px solid #fff;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;color:white;}
 .bal-badge{background:rgba(255,255,255,0.2);padding:8px 25px;border-radius:50px;font-size:15px;display:inline-block;margin-top:10px;border:1px solid rgba(255,255,255,0.3);}
 
+/* container & pages */
 .container{padding:15px;}
 .page{display:none;}
 .page.active{display:block;}
-
-/* cards */
 .card{background:#1c1d38;border-radius:20px;padding:20px;border:1px solid #2d2e4d;margin-bottom:15px;}
 
-/* task grid */
+/* task mini */
 .task-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px;}
 .task-mini{background:#1c1d38;border-radius:18px;padding:15px 10px;text-align:center;border:1px solid #2d2e4d;cursor:pointer;}
 .task-mini i{font-size:30px;margin-bottom:10px;background:linear-gradient(135deg,#a569bd,#f1948a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .task-btn{background:linear-gradient(90deg,#bb8fce,#f1948a);border:none;padding:10px;border-radius:10px;color:white;font-weight:bold;font-size:11px;width:100%;cursor:pointer;margin-top:10px;}
 
-/* video / play button */
+/* video/play button */
 .video-box{text-align:center;padding:30px;}
 .play-large{width:75px;height:75px;background:linear-gradient(135deg,#bb8fce,#f1948a);border-radius:50%;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 5px 15px rgba(187,143,206,0.4);}
 
-/* withdraw card */
+/* withdraw */
 .withdraw-card{background:#1c1d38;border-radius:25px;padding:50px 20px;text-align:center;border:1px solid #2d2e4d;margin-bottom:20px;}
 .withdraw-card h1{font-size:50px;color:#00ffa3;margin:10px 0;}
 .in-field{width:100%;padding:16px;background:#0b0c1e;border:1px solid #2d2e4d;border-radius:12px;color:white;margin-bottom:15px;font-size:15px;}
@@ -46,14 +52,13 @@ body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
 .nav-item.active{color:#bb8fce;}
 .nav-item i{font-size:22px;margin-bottom:4px;display:block;}
 
-/* Task cards in Task page */
+/* Task cards */
 .task-card{background:#1c1d38;border-radius:20px;padding:15px;border:1px solid #2d2e4d;margin-bottom:12px;text-align:center;}
 .task-card h4{margin-bottom:6px;font-size:14px;}
 .task-card p{font-size:12px;color:#aaa;margin-bottom:8px;}
 .task-card button{background:linear-gradient(135deg,#bb8fce,#f1948a);border:none;color:#fff;padding:8px 0;border-radius:12px;width:100%;cursor:pointer;font-weight:bold;}
 </style>
 </head>
-
 <body>
 
 <!-- HEADER -->
@@ -65,7 +70,7 @@ body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
 
 <div class="container">
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <div id="home" class="page active">
  <div class="task-grid">
   <div class="task-mini">
@@ -86,20 +91,26 @@ body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
  </div>
 </div>
 
-<!-- SUPPORT PAGE -->
+<!-- SUPPORT -->
 <div id="support" class="page">
  <div class="card video-box">
   <div class="play-large"><i class="fa-solid fa-play"></i></div>
   <h3>টিউটোরিয়াল ভিডিও</h3>
   <button class="task-btn" onclick="window.open('https://t.me/YOUR_SUPPORT')">ভিডিও দেখুন</button>
  </div>
+ <div class="task-grid">
+  <div class="task-mini" onclick="window.open('https://t.me/YOUR_SUPPORT')">
+   <i class="fa-brands fa-telegram"></i><br>টেলিগ্রাম
+  </div>
+  <div class="task-mini" onclick="location.href='mailto:YOUR_MAIL'">
+   <i class="fa-solid fa-envelope"></i><br>ইমেইল
+  </div>
+ </div>
 </div>
 
-<!-- TASK PAGE -->
+<!-- TASK -->
 <div id="tasks" class="page">
- <div id="task-list">
-   <!-- JS থেকে ৯টি অ্যাড তৈরি হবে -->
- </div>
+ <div id="task-list"></div>
  <div class="task-card">
   <h4>চ্যানেল জয়েন টাস্ক</h4>
   <p>Join our Telegram Channel + 40 টাকা</p>
@@ -107,7 +118,7 @@ body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
  </div>
 </div>
 
-<!-- WITHDRAW PAGE -->
+<!-- WITHDRAW -->
 <div id="withdraw" class="page">
  <div class="withdraw-card">
   <p>মোট ব্যালেন্স</p>
@@ -133,17 +144,35 @@ body{background:#0b0c1e;color:#fff;padding-bottom:90px;}
 </div>
 
 <script>
+/* Firebase */
+const firebaseConfig = {
+ apiKey: "AIzaSyBjuU8_Iz0VQ1mnIdLk6kcP0IffEBpmUPo",
+ authDomain: "mini-bot-26c78.firebaseapp.com",
+ databaseURL: "https://mini-bot-26c78-default-rtdb.firebaseio.com",
+ projectId: "mini-bot-26c78",
+ storageBucket: "mini-bot-26c78.firebasestorage.app",
+ messagingSenderId: "628268418531",
+ appId: "1:628268418531:web:ffda48e076173b1ba2ccd6"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* Telegram */
 const tg = window.Telegram.WebApp;
 tg.ready();
-tg.expand();
-const user = tg.initDataUnsafe?.user || {id:'test',first_name:'User'};
-const uid = user.id;
-let data = {balance:0,ads:0,refs:0,joined:false};
+const user = tg.initDataUnsafe?.user;
+const uid = user ? user.id : "test_123";
 
-document.getElementById('u-name').innerText = user.first_name;
-document.getElementById('u-initial').innerText = user.first_name[0];
-document.getElementById('ref-url').value = `https://t.me/crypto_passbot?start=${uid}`;
-updateUI();
+/* Load User Data */
+let data = { balance:0, ads:0, refs:0, joined:false };
+db.ref('users/'+uid).on('value',snap=>{
+ let d = snap.val() || { balance:0, ads:0, refs:0, joined:false };
+ data = d;
+ updateUI();
+ document.getElementById('u-name').innerText = user ? user.first_name : "User";
+ document.getElementById('u-initial').innerText = user ? user.first_name.charAt(0) : "?";
+ document.getElementById('ref-url').value = `https://t.me/crypto_passbot?start=${uid}`;
+});
 
 /* NAV */
 document.querySelectorAll('.nav-item').forEach(item=>{
@@ -164,7 +193,7 @@ document.getElementById('copyRefBtn').onclick=()=>{
  tg.showAlert("কপি হয়েছে!");
 };
 
-/* TASK LIST GENERATE (৯ Ad Task) */
+/* Generate 9 Ads */
 const taskList=document.getElementById('task-list');
 for(let i=1;i<=9;i++){
  let div=document.createElement('div');
@@ -175,49 +204,53 @@ for(let i=1;i<=9;i++){
  taskList.appendChild(div);
 }
 
-/* WATCH AD (১০ সেকেন্ড) */
+/* Watch Ad */
 function watchAd(i,btn){
  btn.disabled=true;
  btn.innerText='Watching...';
  setTimeout(()=>{
    data.ads++;
    data.balance+=20;
+   db.ref('users/'+uid).update({ balance:data.balance, ads:data.ads });
    updateUI();
    tg.showAlert("২০ টাকা যোগ হয়েছে!");
    btn.innerText='▶ Watch Ad';
    btn.disabled=false;
- },10000); // ১০ সেকেন্ড পরে balance যোগ হবে
+ },10000); // ১০ সেকেন্ড
 }
 
-/* CHANNEL JOIN TASK */
+/* Join Channel */
 function joinChannelTask(){
  if(data.joined) return;
  window.open("https://t.me/YOUR_CHANNEL","_blank");
  data.balance+=40;
  data.joined=true;
+ db.ref('users/'+uid).update({ balance:data.balance, joined:true });
  updateUI();
  tg.showAlert("৪০ টাকা যোগ হয়েছে!");
 }
 
-/* UPDATE UI */
+/* Withdraw */
+document.getElementById('withdrawBtn').onclick=()=>{
+ const amt=parseFloat(document.getElementById('w-amt').value);
+ const num=document.getElementById('w-num').value;
+ const meth=document.getElementById('w-meth').value;
+ if(!amt || !num) return tg.showAlert("সব তথ্য পূরণ করুন");
+ if(amt<800) return tg.showAlert("মিনিমাম ৮০০ টাকা লাগবে!");
+ if(data.balance<amt) return tg.showAlert("দুঃখিত আপনার পর্যাপ্ত ব্যালেন্স নেই");
+ data.balance-=amt;
+ db.ref('users/'+uid).update({ balance:data.balance });
+ updateUI();
+ tg.showAlert("রিকোয়েস্ট সফল হয়েছে!");
+};
+
+/* Update UI */
 function updateUI(){
  document.getElementById('top-bal').innerText=data.balance.toFixed(2);
  document.getElementById('main-bal').innerText=data.balance.toFixed(2);
  document.getElementById('ads-c').innerText=data.ads+"/9";
  document.getElementById('refs-c').innerText=data.refs;
 }
-
-/* WITHDRAW */
-document.getElementById('withdrawBtn').onclick=()=>{
- const amt=parseFloat(document.getElementById('w-amt').value);
- const num=document.getElementById('w-num').value;
- if(!amt || !num) return tg.showAlert("সব তথ্য পূরণ করুন");
- if(amt<800) return tg.showAlert("মিনিমাম ৮০০ টাকা লাগবে!");
- if(data.balance<amt) return tg.showAlert("দুঃখিত আপনার পর্যাপ্ত ব্যালেন্স নেই");
- data.balance-=amt;
- updateUI();
- tg.showAlert("রিকোয়েস্ট সফল হয়েছে!");
-};
 </script>
 
 </body>
