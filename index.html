@@ -1,50 +1,258 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Mobile Mini App</title>
+    <title>Money Garden - Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --bg-dark: #12122b;
+            --card-dark: #1e1e3d;
+            --primary-gradient: linear-gradient(90deg, #ff4081, #7c4dff);
+            --text-white: #ffffff;
+            --text-gray: #b0b0b0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header with dynamic User Data */
+        .user-header {
+            background: var(--primary-gradient);
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            background: #ffffff33;
+            border-radius: 50%;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
+            font-size: 28px;
+            border: 3px solid white;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
-        .btn {
-            padding: 15px 30px;
-            background-color: #248bcf;
-            color: white;
+
+        .balance-badge {
+            background: rgba(0,0,0,0.4);
+            padding: 8px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 15px 100px 15px;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .card {
+            background: var(--card-dark);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-main {
+            background: var(--primary-gradient);
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            width: 100%;
+            font-weight: bold;
             cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* Bottom Nav (History Removed) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--card-dark);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 2px solid #333;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .nav-item.active { color: #ff4081; font-weight: bold; }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background: #252545;
+            color: white;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
-    <h2 id="user-name">হ্যালো!</h2>
-    <p>আপনার মিনি অ্যাপটি এখন লাইভ।</p>
-    <button class="btn" onclick="showAlert()">ক্লিক করুন</button>
+
+    <div class="user-header">
+        <div class="avatar" id="user-initial">?</div>
+        <h3 id="display-name" style="margin: 0;">Loading...</h3>
+        <div class="balance-badge">ব্যালেন্স: <span id="balance">0.00</span> TAKA</div>
+    </div>
+
+    <div class="content-area">
+        <div id="home" class="page active">
+            <div class="grid-2">
+                <div class="card" style="text-align: center;">
+                    <i class="fa-solid fa-rectangle-ad" style="color: #ff4081; font-size: 24px;"></i>
+                    <p style="margin: 8px 0 0; font-size: 13px;">দৈনিক বিজ্ঞাপন</p>
+                    <b style="color: #ff4081;">0/10</b>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <i class="fa-solid fa-users" style="color: #7c4dff; font-size: 24px;"></i>
+                    <p style="margin: 8px 0 0; font-size: 13px;">মোট রেফার</p>
+                    <b style="color: #7c4dff;">0</b>
+                </div>
+            </div>
+            <div class="card">
+                <h4 style="margin-top:0;"><i class="fa-solid fa-share-nodes"></i> রেফার করে আয় করুন</h4>
+                <p style="font-size: 13px; color: var(--text-gray);">বন্ধুদের ইনভাইট করলে আপনি বোনাস পাবেন।</p>
+                <input type="text" id="refer-link" value="https://t.me/your_bot?start=user" readonly>
+                <button class="btn-main" onclick="copyLink()">লিঙ্ক কপি করুন</button>
+            </div>
+        </div>
+
+        <div id="tasks" class="page">
+            <h4 style="margin-bottom:15px;">আপনার জন্য কাজ</h4>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <b>বিজ্ঞাপন দেখে আয়</b><br>
+                        <small style="color: #4caf50;">পুরস্কার: ৫.০০ টাকা</small>
+                    </div>
+                    <button class="btn-main" style="width: auto; padding: 8px 20px;">দেখুন</button>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <b>টেলিগ্রাম চ্যানেল জয়েন</b><br>
+                        <small style="color: #4caf50;">পুরস্কার: ১০.০০ টাকা</small>
+                    </div>
+                    <button class="btn-main" style="width: auto; padding: 8px 20px; background: #248bcf;">জয়েন</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="withdraw" class="page">
+            <div class="card">
+                <h4>টাকা উত্তোলন করুন</h4>
+                <label>পেমেন্ট মেথড:</label>
+                <select>
+                    <option>বিকাশ</option>
+                    <option>নগদ</option>
+                    <option>রকেট</option>
+                </select>
+                <label>পার্সোনাল নম্বর:</label>
+                <input type="number" placeholder="01XXXXXXXXX">
+                <label>পরিমাণ:</label>
+                <input type="number" placeholder="সর্বনিম্ন ৫০০ টাকা">
+                <button class="btn-main" style="margin-top: 10px;">রিকোয়েস্ট পাঠান</button>
+            </div>
+        </div>
+
+        <div id="support" class="page">
+            <div class="card" style="text-align: center;">
+                <h4>সহায়তা কেন্দ্র</h4>
+                <p style="font-size: 14px; color: var(--text-gray);">কিভাবে কাজ করবেন বুঝতে সমস্যা হলে ভিডিওটি দেখুন অথবা সরাসরি যোগাযোগ করুন।</p>
+                <button class="btn-main"><i class="fa-solid fa-play"></i> ভিডিও গাইড</button>
+                <div class="grid-2" style="margin-top: 15px;">
+                    <button class="btn-main" style="background: #248bcf;"><i class="fa-brands fa-telegram"></i> টেলিগ্রাম</button>
+                    <button class="btn-main" style="background: #333;"><i class="fa-solid fa-envelope"></i> ইমেইল</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showPage('home', this)"><i class="fa-solid fa-house"></i>হোম</div>
+        <div class="nav-item" onclick="showPage('tasks', this)"><i class="fa-solid fa-tasks"></i>টাস্ক</div>
+        <div class="nav-item" onclick="showPage('withdraw', this)"><i class="fa-solid fa-wallet"></i>উইথড্র</div>
+        <div class="nav-item" onclick="showPage('support', this)"><i class="fa-solid fa-headset"></i>সাপোর্ট</div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
-        
-        // ইউজারের নাম দেখানো
+        tg.expand();
+
+        // ১. অটোমেটিক ইউজারের নাম ও ছবি সেট করা
         const user = tg.initDataUnsafe?.user;
         if (user) {
-            document.getElementById('user-name').innerText = `হ্যালো, ${user.first_name}!`;
+            const fullName = user.first_name + (user.last_name ? " " + user.last_name : "");
+            document.getElementById('display-name').innerText = fullName + " ✅";
+            document.getElementById('user-initial').innerText = user.first_name.charAt(0);
+            
+            // রেফার লিঙ্ক আপডেট করা (আইডি অনুযায়ী)
+            document.getElementById('refer-link').value = "https://t.me/your_bot?start=" + user.id;
+        } else {
+            document.getElementById('display-name').innerText = "অচেনা ইউজার";
         }
 
-        function showAlert() {
-            tg.showAlert("আপনি সফলভাবে বাটনটি ক্লিক করেছেন!");
+        // ২. পেজ বদলানোর ফাংশন
+        function showPage(pageId, element) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // ৩. লিঙ্ক কপি ফাংশন
+        function copyLink() {
+            const link = document.getElementById('refer-link');
+            link.select();
+            document.execCommand('copy');
+            tg.showScanQrPopup({ text: "লিঙ্ক কপি হয়েছে!" }); 
+            // টেলিগ্রামে ছোট অ্যালার্ট দেখাবে
+            setTimeout(() => tg.closeScanQrPopup(), 2000);
         }
     </script>
 </body>
