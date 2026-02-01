@@ -45,22 +45,36 @@
         .page { display: none; }
         .page.active { display: block; }
 
-        /* কার্ড এবং বাটন স্টাইল */
         .card {
             background: var(--card-dark); border-radius: 15px;
             padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);
         }
+
+        /* টাস্ক কার্ড ডিজাইন - স্ক্রিনশট ৩ অনুযায়ী */
+        .task-card {
+            background: var(--card-dark); border-radius: 20px;
+            padding: 20px; margin-bottom: 20px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .task-icon-bg {
+            width: 50px; height: 50px; background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+            font-size: 24px; margin-bottom: 10px; color: #7c4dff;
+        }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-task {
+            flex: 1; padding: 12px; border-radius: 10px; border: none;
+            color: white; font-weight: bold; cursor: pointer;
+        }
+        .btn-open { background: #333; }
+        .btn-claim { background: #00bcd4; }
+
         .btn-main {
             background: var(--primary-gradient); border: none; color: white;
             padding: 12px; border-radius: 10px; width: 100%; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
 
-        /* টাস্ক ডিজাইন - স্ক্রিনশট ৩ অনুযায়ী */
-        .task-card { text-align: center; padding: 20px; border-radius: 20px; margin-bottom: 15px;}
-        .task-icon { font-size: 40px; color: #7c4dff; margin-bottom: 10px; }
-
-        /* বটম নেভিগেশন - হিস্ট্রি বাদে ৪টি অপশন */
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%; background: var(--card-dark);
             display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #333;
@@ -79,7 +93,7 @@
 
     <div class="user-header">
         <div class="avatar" id="user-initial">?</div>
-        <h4 id="display-name" style="margin:0;">Loading...</h4>
+        <h4 id="display-name" style="margin:0;">লোড হচ্ছে...</h4>
         <div class="balance-badge">💰 ব্যালেন্স: <span class="user-balance">0.00</span> TAKA</div>
     </div>
 
@@ -99,7 +113,7 @@
             </div>
             <div class="card">
                 <h4><i class="fa-solid fa-gift"></i> রেফার লিঙ্ক</h4>
-                <input type="text" id="ref-link" value="https://t.me/your_bot?start=user" readonly>
+                <input type="text" id="ref-link" readonly>
                 <button class="btn-main" style="margin-top:10px;" onclick="copyLink()">কপি ও শেয়ার করুন</button>
             </div>
         </div>
@@ -110,37 +124,39 @@
                 <button class="btn-main" onclick="window.open('আপনার_ভিডিও_লিঙ্ক')"><i class="fa-solid fa-play"></i> ভিডিও দেখুন</button>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div class="card" style="text-align:center;" onclick="window.open('https://t.me/আপনার_আইডি')"><i class="fa-brands fa-telegram" style="color:#248bcf;"></i><br>টেলিগ্রাম</div>
+                <div class="card" style="text-align:center;" onclick="window.open('https://t.me/আপনার_বট_ইউজারনেম')"><i class="fa-brands fa-telegram" style="color:#248bcf;"></i><br>টেলিগ্রাম</div>
                 <div class="card" style="text-align:center;" onclick="location.href='mailto:আপনার_ইমেইল@gmail.com'"><i class="fa-solid fa-envelope" style="color:#f44336;"></i><br>ইমেইল</div>
                 <div class="card" style="text-align:center;" onclick="window.open('আপনার_লাইভ_চ্যাট_লিঙ্ক')"><i class="fa-solid fa-comment-dots" style="color:#4caf50;"></i><br>লাইভ চ্যাট</div>
             </div>
         </div>
 
         <div id="tasks" class="page">
-            <div class="card task-card">
-                <i class="fa-solid fa-video task-icon"></i>
-                <b>বিজ্ঞাপন দেখে আয়</b>
-                <div style="color:var(--green); font-weight:bold; margin:10px 0;">পুরস্কার: ৫.০০ TAKA</div>
+            <div class="task-card">
+                <div class="task-icon-bg"><i class="fa-solid fa-video"></i></div>
+                <div><b>বিজ্ঞাপন দেখুন</b></div>
+                <div style="color:var(--green); font-weight:bold; margin:10px 0;">পুরস্কার: ২৫.০০ TAKA</div>
                 <button class="btn-main" onclick="showAd()">বিজ্ঞাপন দেখুন</button>
             </div>
-            <div class="card task-card">
-                <i class="fa-brands fa-telegram task-icon" style="color:#248bcf;"></i>
-                <b>চ্যানেল জয়েন করুন</b>
-                <div style="color:var(--green); font-weight:bold; margin:10px 0;">পুরস্কার: ১০.০০ TAKA</div>
-                <button class="btn-main" onclick="window.open('আপনার_চ্যানেল_লিঙ্ক')">জয়েন ও ক্লেইম</button>
+            
+            <div class="task-card">
+                <div class="task-icon-bg"><i class="fa-brands fa-telegram"></i></div>
+                <div><b>টেলিগ্রাম চ্যানেল যোগ দিন</b></div>
+                <div style="color:var(--green); font-weight:bold; margin:10px 0;">পুরস্কার: ৪০.০০ TAKA</div>
+                <div class="btn-group">
+                    <button class="btn-task btn-open" onclick="window.open('আপনার_চ্যানেল_লিঙ্ক')">চ্যানেল ওপেন</button>
+                    <button class="btn-task btn-claim" onclick="claimTask(40)">চেক ও ক্লেইম</button>
+                </div>
             </div>
         </div>
 
         <div id="withdraw" class="page">
             <div class="card">
                 <h4 style="text-align:center;">টাকা উত্তোলন</h4>
-                <p style="text-align:center; font-size:12px; color:var(--green);">ন্যূনতম উত্তোলন: ৫০০ টাকা</p>
+                <p style="text-align:center; font-size:12px; color:var(--green);">ন্যূনতম উত্তোলন: ৮০০ টাকা</p>
                 <label>পদ্ধতি:</label>
-                <select id="withdraw-method"><option>বিকাশ</option><option>নগদ</option></select>
-                <label>নম্বর:</label>
-                <input type="number" id="withdraw-num" placeholder="01XXXXXXXXX">
-                <label>পরিমাণ:</label>
-                <input type="number" id="withdraw-amount" placeholder="৫০০">
+                <select id="method"><option>বিকাশ</option><option>নগদ</option></select>
+                <input type="number" id="w-num" placeholder="পার্সোনাল নম্বর">
+                <input type="number" id="w-amount" placeholder="পরিমাণ (৮০০-এর বেশি)">
                 <button class="btn-main" style="margin-top:15px;" onclick="handleWithdraw()">রিকোয়েস্ট পাঠান</button>
             </div>
         </div>
@@ -159,12 +175,14 @@
         let balance = 0.00;
         let adsSeen = 0;
 
-        // ইউজারের নাম ও ছবি সেট করা
+        // আপনার বটের ইউজারনেম এখানে দিন (যেমন: YourBot_bot)
+        const botUsername = "@crypto_passbot"; 
+
         const user = tg.initDataUnsafe?.user;
         if (user) {
-            document.getElementById('display-name').innerText = user.first_name + " ✅";
+            document.getElementById('display-name').innerText = user.first_name;
             document.getElementById('user-initial').innerText = user.first_name.charAt(0);
-            document.getElementById('ref-link').value = "https://t.me/your_bot?start=" + user.id;
+            document.getElementById('ref-link').value = `https://t.me/${botUsername}/app?startapp=${user.id}`;
         }
 
         function showPage(pageId, element) {
@@ -174,12 +192,17 @@
             element.classList.add('active');
         }
 
-        // বিজ্ঞাপন দেখা ও ব্যালেন্স যোগ (Adsterra/Monetag লিঙ্ক এখানে দিবেন)
         function showAd() {
-            window.open('আপনার_বিজ্ঞাপন_লিঙ্ক'); 
-            balance += 5.00;
+            window.open('আপনার_ADSTERRA_বা_MONETAG_লিঙ্ক'); 
+            balance += 25.00;
             adsSeen += 1;
             updateUI();
+        }
+
+        function claimTask(reward) {
+            balance += reward;
+            updateUI();
+            alert("টাস্ক ক্লেইম সফল হয়েছে!");
         }
 
         function updateUI() {
@@ -187,22 +210,26 @@
             document.getElementById('ads-count').innerText = adsSeen + "/10";
         }
 
-        // উইথড্র হ্যান্ডেল করা
         function handleWithdraw() {
-            const amount = parseFloat(document.getElementById('withdraw-amount').value);
-            if (balance >= amount && amount >= 500) {
+            const amount = parseFloat(document.getElementById('w-amount').value);
+            if (amount < 800 || isNaN(amount)) {
+                alert("দুঃখিত, ন্যূনতম উত্তোলন ৮০০ টাকা।");
+                return;
+            }
+            if (balance >= amount) {
                 balance -= amount;
                 updateUI();
-                alert("আপনার রিকোয়েস্ট সফলভাবে জমা হয়েছে!");
+                alert("উইথড্র রিকোয়েস্ট সফলভাবে জমা হয়েছে!");
             } else {
-                alert("দুঃখিত, আপনার পর্যাপ্ত ব্যালেন্স নেই বা পরিমাণ ভুল।");
+                alert("দুঃখিত! আপনার পর্যাপ্ত ব্যালেন্স নাই।");
             }
         }
 
         function copyLink() {
             const link = document.getElementById('ref-link');
-            link.select(); document.execCommand('copy');
-            tg.showAlert("রেফার লিঙ্ক কপি হয়েছে!");
+            link.select();
+            document.execCommand('copy');
+            alert("আপনার রেফার লিঙ্ক কপি হয়েছে!");
         }
     </script>
 </body>
