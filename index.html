@@ -10,125 +10,144 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #0e0e26; color: white; margin: 0; padding-bottom: 80px; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background: #0b0b1a; color: white; margin: 0; padding-bottom: 80px; }
 
-        /* হেডার ডিজাইন */
-        .header { background: linear-gradient(90deg, #ff3d81, #7c4dff); padding: 30px 15px; text-align: center; border-radius: 0 0 30px 30px; }
-        .profile-img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid white; background: white; margin-bottom: 10px; }
-        .user-info { font-size: 18px; font-weight: bold; }
-        .bal-badge { background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; font-size: 14px; margin-top: 5px; display: inline-block; }
+        /* ১. হেডার ডিজাইন */
+        .header { background: linear-gradient(90deg, #ff3d81, #7c4dff); padding: 35px 20px; text-align: center; border-radius: 0 0 40px 40px; }
+        .profile-container { width: 85px; height: 85px; background: white; border-radius: 50%; margin: 0 auto 12px; border: 4px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
+        .bal-box { background: rgba(0,0,0,0.3); padding: 8px 20px; border-radius: 30px; display: inline-block; font-size: 15px; margin-top: 5px; border: 1px solid rgba(255,255,255,0.1); }
 
         .container { padding: 15px; }
         .page { display: none; }
         .active { display: block; }
 
-        /* টাস্ক কার্ড ডিজাইন */
-        .task-card { background: #1a1a3d; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #2d2d5a; display: flex; flex-direction: column; gap: 10px; }
-        .task-header { display: flex; justify-content: space-between; align-items: center; }
-        .task-title { font-size: 14px; font-weight: 600; }
-        .task-reward { color: #00ffa3; font-size: 12px; }
-        .task-btn-row { display: flex; gap: 10px; margin-top: 5px; }
-        .task-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; color: white; }
-        .btn-join { background: #0088cc; }
-        .btn-claim { background: #00d2ff; }
+        /* ২. হোম পেজ ডিজাইন (১ ও ২ নং স্ক্রিনশট) */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .stat-card { background: #16162d; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid #2d2d4a; }
+        .card { background: #16162d; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #2d2d4a; }
+        .btn-grad { background: linear-gradient(90deg, #ff3d81, #7c4dff); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* উইথড্র পেজ ডিজাইন */
-        .withdraw-bal-card { background: #1a1a3d; border-radius: 20px; padding: 30px 20px; text-align: center; margin-bottom: 20px; border: 1px solid #2d2d5a; }
-        .withdraw-bal-card h2 { color: #00ffa3; font-size: 32px; margin: 10px 0; }
-        
-        .withdraw-form { background: #1a1a3d; border-radius: 20px; padding: 20px; border: 1px solid #2d2d5a; }
-        .form-label { display: block; font-size: 13px; color: #aaa; margin-bottom: 8px; text-align: left; }
-        .form-input { width: 100%; padding: 12px; background: #0e0e26; border: 1px solid #2d2d5a; border-radius: 10px; color: white; margin-bottom: 15px; outline: none; }
-        .submit-btn { background: linear-gradient(90deg, #ff3d81, #7c4dff); width: 100%; padding: 15px; border-radius: 12px; border: none; color: white; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        /* ৩. সাপোর্ট পেজ ডিজাইন (২ নং স্ক্রিনশট) */
+        .support-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .support-item { background: #16162d; padding: 20px; border-radius: 20px; text-align: center; border: 1px solid #2d2d4a; }
+        .support-item i { font-size: 28px; margin-bottom: 10px; color: #ff3d81; }
+
+        /* ৪. টাস্ক পেজ ডিজাইন (৩ নং স্ক্রিনশট) */
+        .task-box { background: #16162d; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #2d2d4a; border-left: 5px solid #7c4dff; }
+        .task-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .task-btns { display: flex; gap: 8px; }
+        .btn-small { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: bold; font-size: 12px; color: white; cursor: pointer; }
+
+        /* ৫. উইথড্র পেজ ডিজাইন (৪ নং স্ক্রিনশট) */
+        .withdraw-bal { background: #16162d; padding: 40px 20px; border-radius: 25px; text-align: center; margin-bottom: 20px; border: 1px solid #2d2d4a; }
+        .withdraw-bal h1 { color: #00ffa3; font-size: 40px; margin: 10px 0; }
+        .input-box { width: 100%; padding: 15px; background: #0b0b1a; border: 1px solid #2d2d4a; border-radius: 12px; color: white; margin-bottom: 15px; outline: none; }
 
         /* বটম ন্যাভ */
-        .nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #151535; padding: 12px 0; border-top: 1px solid #2d2d5a; }
-        .nav-item { flex: 1; text-align: center; color: #7e7e9a; font-size: 11px; cursor: pointer; }
-        .nav-item.active { color: #ff3d81; }
-        .nav-item i { font-size: 22px; margin-bottom: 4px; display: block; }
+        .nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #12122b; padding: 12px 0; border-top: 1px solid #2d2d4a; z-index: 1000; }
+        .nav-link { flex: 1; text-align: center; color: #666; font-size: 11px; cursor: pointer; }
+        .nav-link.active { color: #ff3d81; }
+        .nav-link i { font-size: 22px; margin-bottom: 4px; display: block; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div id="u-photo-box">
-        <img id="u-photo" class="profile-img" src="" style="display:none;">
-        <div id="u-initial" class="profile-img" style="display:flex; align-items:center; justify-content:center; background:#7c4dff; font-size:30px; font-weight:bold; margin-left:auto; margin-right:auto;">?</div>
+    <div class="profile-container">
+        <img id="u-photo" style="display:none;">
+        <span id="u-initial" style="font-size:35px; color:#7c4dff; font-weight:bold;">?</span>
     </div>
-    <div class="user-info" id="u-name">Loading...</div>
-    <div class="bal-badge">ব্যালেন্স: <span id="u-bal-top">0.00</span> TAKA 💰</div>
+    <div style="font-size:20px; font-weight:bold;" id="u-name">Loading...</div>
+    <div class="bal-box">ব্যালেন্স: <span id="u-bal-top">0.00</span> TAKA 💰</div>
 </div>
 
 <div class="container">
     <div id="p-home" class="page active">
-        <div class="task-card" style="text-align:center;">
-            <h4 style="margin:0;">রেফার লিঙ্ক</h4>
-            <input type="text" id="ref-link" class="form-input" style="text-align:center; margin-top:10px;" readonly>
-            <button class="submit-btn" onclick="copyRef()"><i class="fa-solid fa-copy"></i> লিঙ্ক কপি করুন</button>
+        <div class="stat-grid">
+            <div class="stat-card">
+                <i class="fa-solid fa-rectangle-ad" style="color:#ff3d81;"></i><br>
+                <span style="font-size:12px; color:#aaa;">দৈনিক বিজ্ঞাপন</span><br>
+                <b id="u-ads">0/10</b>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-users" style="color:#7c4dff;"></i><br>
+                <span style="font-size:12px; color:#aaa;">মোট রেফার</span><br>
+                <b id="u-refs">0</b>
+            </div>
+        </div>
+        <div class="card">
+            <h4 style="margin:0;"><i class="fa-solid fa-link"></i> রেফার করে আয় করুন</h4>
+            <p style="font-size:12px; color:#888; margin: 10px 0;">প্রতি রেফারে ২৫ টাকা বোনাস পান!</p>
+            <input type="text" id="ref-link" class="input-box" style="margin-bottom:10px; text-align:center;" readonly>
+            <button class="btn-grad" onclick="copyRef()"><i class="fa-solid fa-copy"></i> কপি লিঙ্ক</button>
+        </div>
+    </div>
+
+    <div id="p-support" class="page">
+        <div class="card" style="text-align:center;">
+            <h4>টিউটোরিয়াল ভিডিও</h4>
+            <p style="font-size:12px; color:#888;">কিভাবে কাজ করবেন ভিডিওটি দেখে নিন</p>
+            <button class="btn-grad" onclick="window.open('URL')"><i class="fa-solid fa-play"></i> ভিডিও দেখুন</button>
+        </div>
+        <div class="support-grid">
+            <div class="support-item" onclick="window.open('https://t.me/crypto_passbot')"><i class="fa-brands fa-telegram"></i><br>টেলিগ্রাম</div>
+            <div class="support-item" onclick="location.href='mailto:support@gmail.com'"><i class="fa-solid fa-envelope"></i><br>ইমেইল</div>
+            <div class="support-item"><i class="fa-solid fa-circle-question"></i><br>FAQ</div>
+            <div class="support-item"><i class="fa-solid fa-headset"></i><br>লাইভ চ্যাট</div>
         </div>
     </div>
 
     <div id="p-tasks" class="page">
-        <h3 style="margin-bottom:15px; font-size:16px;"><i class="fa-solid fa-tasks"></i> আপনার টাস্কগুলো</h3>
-        
-        <div class="task-card">
-            <div class="task-header">
-                <span class="task-title">টেলিগ্রাম চ্যানেলে যোগ দিন</span>
-                <span class="task-reward">পুরস্কার: ২০.০০ TAKA</span>
+        <h3 style="margin-bottom:15px; font-size:16px;">দৈনিক টাস্ক</h3>
+        <div class="task-box">
+            <div class="task-info">
+                <span>টেলিগ্রাম চ্যানেল জয়েন</span>
+                <span style="color:#00ffa3;">+২০ TAKA</span>
             </div>
-            <div class="task-btn-row">
-                <button class="task-btn btn-join" onclick="window.open('https://t.me/crypto_passbot')">চ্যানেলে যান</button>
-                <button class="task-btn btn-claim" onclick="claimTask(20)">চেক করুন</button>
+            <div class="task-btns">
+                <button class="btn-small" style="background:#0088cc;" onclick="window.open('URL')">Join</button>
+                <button class="btn-small" style="background:#7c4dff;" onclick="claim()">Check</button>
             </div>
         </div>
-
-        <div class="task-card">
-            <div class="task-header">
-                <span class="task-title">ইউটিউব চ্যানেল সাবস্ক্রাইব</span>
-                <span class="task-reward">পুরস্কার: ৫০.০০ TAKA</span>
+        <div class="task-box">
+            <div class="task-info">
+                <span>বিজ্ঞাপন দেখুন</span>
+                <span style="color:#00ffa3;">+৫ TAKA</span>
             </div>
-            <div class="task-btn-row">
-                <button class="task-btn btn-join" style="background:#ff0000;" onclick="window.open('URL')">ইউটিউবে যান</button>
-                <button class="task-btn btn-claim" onclick="claimTask(50)">চেক করুন</button>
-            </div>
+            <button class="btn-grad" style="padding:10px;" onclick="watchAd()">বিজ্ঞাপন দেখুন</button>
         </div>
     </div>
 
     <div id="p-withdraw" class="page">
-        <div class="withdraw-bal-card">
-            <p style="margin:0; color:#aaa; font-size:14px;">আপনার মোট ব্যালেন্স</p>
-            <h2 id="u-bal-main">0.00</h2>
-            <span style="color:#aaa; font-size:12px;">TAKA</span>
+        <div class="withdraw-bal">
+            <p style="color:#aaa; margin:0;">আপনার ব্যালেন্স</p>
+            <h1 id="u-bal-main">0.00</h1>
+            <span style="color:#aaa;">TAKA</span>
         </div>
-
-        <div class="withdraw-form">
-            <h4 style="margin:0 0 15px 0; text-align:center; color:#ff3d81;"><i class="fa-solid fa-money-bill-transfer"></i> টাকা উত্তোলন করুন</h4>
-            
-            <label class="form-label">পেমেন্ট মেথড</label>
-            <select id="w-method" class="form-input">
-                <option>বিকাশ (পার্সোনাল)</option>
-                <option>নগদ (পার্সোনাল)</option>
+        <div class="card">
+            <h4 style="margin:0 0 15px 0; text-align:center;">টাকা উত্তোলন</h4>
+            <select id="w-method" class="input-box">
+                <option>বিকাশ (Personal)</option>
+                <option>নগদ (Personal)</option>
             </select>
-
-            <label class="form-label">অ্যাকাউন্ট নম্বর</label>
-            <input type="number" id="w-num" class="form-input" placeholder="01XXXXXXXXX">
-
-            <label class="form-label">উত্তোলনের পরিমাণ</label>
-            <input type="number" id="w-amount" class="form-input" placeholder="মিনিমাম ৮০০ টাকা">
-
-            <button class="submit-btn" onclick="requestWithdraw()"><i class="fa-solid fa-paper-plane"></i> রিকোয়েস্ট জমা দিন</button>
+            <input type="number" id="w-num" class="input-box" placeholder="আপনার নম্বর দিন">
+            <input type="number" id="w-amount" class="input-box" placeholder="পরিমাণ (মিনিমাম ৮০০)">
+            <button class="btn-grad" onclick="requestWithdraw()"><i class="fa-solid fa-paper-plane"></i> রিকোয়েস্ট পাঠান</button>
         </div>
     </div>
 </div>
 
 <div class="nav">
-    <div class="nav-item active" onclick="showPage('p-home', this)"><i class="fa-solid fa-house"></i>হোম</div>
-    <div class="nav-item" onclick="showPage('p-tasks', this)"><i class="fa-solid fa-list-check"></i>টাস্ক</div>
-    <div class="nav-item" onclick="showPage('p-withdraw', this)"><i class="fa-solid fa-wallet"></i>উইথড্র</div>
+    <div class="nav-link active" onclick="showPage('p-home', this)"><i class="fa-solid fa-house"></i>হোম</div>
+    <div class="nav-link" onclick="showPage('p-support', this)"><i class="fa-solid fa-headset"></i>সাপোর্ট</div>
+    <div class="nav-link" onclick="showPage('p-tasks', this)"><i class="fa-solid fa-list-check"></i>টাস্ক</div>
+    <div class="nav-link" onclick="showPage('p-withdraw', this)"><i class="fa-solid fa-wallet"></i>উইথড্র</div>
 </div>
 
 <script>
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyBjuU8_Iz0VQ1mnIdLk6kcP0IffEBpmUPo",
         authDomain: "mini-bot-26c78.firebaseapp.com",
@@ -145,12 +164,14 @@
     tg.ready();
 
     const user = tg.initDataUnsafe?.user;
-    const uid = user ? user.id : "test_id";
+    const uid = user ? user.id : "test_user";
 
     db.ref('users/' + uid).on('value', (snap) => {
-        const data = snap.val() || { balance: 0, refs: 0 };
+        const data = snap.val() || { balance: 0, refs: 0, ads: 0 };
         document.getElementById('u-bal-top').innerText = data.balance.toFixed(2);
         document.getElementById('u-bal-main').innerText = data.balance.toFixed(2);
+        document.getElementById('u-ads').innerText = data.ads + "/10";
+        document.getElementById('u-refs').innerText = data.refs;
         
         const name = user ? user.first_name : "User";
         document.getElementById('u-name').innerText = name;
@@ -167,26 +188,25 @@
     function showPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
-    }
-
-    function claimTask(amount) {
-        tg.showAlert("চেক করা হচ্ছে... ২ মিনিট পর ব্যালেন্স চেক করুন।");
-    }
-
-    function requestWithdraw() {
-        const amt = document.getElementById('w-amount').value;
-        if(amt < 800) return tg.showAlert("মিনিমাম ৮০০ টাকা প্রয়োজন!");
-        tg.showAlert("রিকোয়েস্ট জমা হয়েছে!");
     }
 
     function copyRef() {
         const copyText = document.getElementById("ref-link");
         copyText.select();
         document.execCommand("copy");
-        tg.showAlert("লিঙ্ক কপি করা হয়েছে!");
+        tg.showAlert("লিঙ্ক কপি হয়েছে!");
     }
+
+    function requestWithdraw() {
+        const amt = document.getElementById('w-amount').value;
+        if(amt < 800) return tg.showAlert("মিনিমাম ৮০০ টাকা লাগবে!");
+        tg.showAlert("উইথড্র রিকোয়েস্ট জমা হয়েছে!");
+    }
+
+    function claim() { tg.showAlert("চেক করা হচ্ছে..."); }
+    function watchAd() { tg.showAlert("অ্যাড লোড হচ্ছে..."); }
 </script>
 </body>
 </html>
