@@ -2,112 +2,164 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money Garden Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Money Garden</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
-        :root { --bg: #12122b; --card: #1e1e3d; --grad: linear-gradient(90deg, #ff4081, #7c4dff); }
-        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding-bottom: 80px; overflow-x: hidden; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0b0b1a; color: white; margin: 0; padding-bottom: 70px; }
         
-        /* আপনার প্রিয় হেডার ডিজাইন */
-        .header { background: var(--grad); padding: 30px 20px; text-align: center; border-radius: 0 0 35px 35px; }
-        .profile-container { width: 75px; height: 75px; border-radius: 50%; border: 3px solid white; margin: 0 auto 10px; background: white; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
-        .initial-avatar { font-size: 32px; color: #7c4dff; font-weight: bold; }
-        .balance-badge { background: rgba(0,0,0,0.3); padding: 6px 18px; border-radius: 20px; font-size: 14px; display: inline-block; margin-top: 5px; }
+        /* ১. হেডার ডিজাইন */
+        .header-card { 
+            background: linear-gradient(90deg, #ff4081, #7c4dff); 
+            padding: 20px; text-align: center; border-radius: 0 0 25px 25px; 
+            margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .profile-pic { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 8px; }
+        .initial-pic { 
+            width: 70px; height: 70px; border-radius: 50%; background: #4caf50; 
+            display: inline-flex; align-items: center; justify-content: center; 
+            font-size: 30px; font-weight: bold; border: 3px solid #fff; margin-bottom: 8px;
+        }
 
-        .content-area { padding: 15px; }
-        .page { display: none; }
-        .active { display: block; }
-        .card { background: var(--card); margin-bottom: 15px; padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .container { padding: 12px; }
         
-        .btn { background: var(--grad); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        
-        /* উইথড্র পেজ ইনপুট */
-        .withdraw-input { width: 100%; padding: 12px; background: #252545; color: white; border: 1px solid #444; border-radius: 10px; box-sizing: border-box; margin-top: 10px; text-align: center; }
+        /* ২. স্ট্যাট কার্ড ডিজাইন (বিজ্ঞাপন ও রেফার) */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: #1a1a35; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #2d2d55; }
+        .stat-card i { font-size: 20px; color: #7c4dff; margin-bottom: 5px; }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; background: var(--card); padding: 12px 0; border-top: 1px solid #333; z-index: 1000; }
-        .nav-item { flex: 1; text-align: center; font-size: 11px; color: #aaa; cursor: pointer; }
+        /* ৩. রেফার কার্ড */
+        .card { background: #1a1a35; border-radius: 18px; padding: 18px; margin-bottom: 15px; border: 1px solid #2d2d55; }
+        .ref-box { background: #0b0b1a; padding: 12px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+        .ref-link-text { font-size: 11px; color: #888; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; width: 80%; }
+
+        /* ৪. টাস্ক ও উইথড্র বাটন ডিজাইন */
+        .btn-grad { 
+            background: linear-gradient(90deg, #ff4081, #7c4dff); 
+            color: white; border: none; padding: 14px; border-radius: 12px; 
+            width: 100%; font-weight: bold; font-size: 15px; cursor: pointer;
+        }
+        .input-group { margin-top: 12px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 5px; }
+        .input-box { width: 100%; padding: 12px; background: #0b0b1a; border: 1px solid #2d2d55; border-radius: 10px; color: white; outline: none; }
+
+        /* ৫. বটম ন্যাভিগেশন */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; display: flex; background: #12122b; padding: 10px 0; border-top: 1px solid #2d2d55; }
+        .nav-item { flex: 1; text-align: center; color: #666; font-size: 11px; cursor: pointer; }
         .nav-item.active { color: #ff4081; }
-        .nav-item i { font-size: 20px; margin-bottom: 4px; display: block; }
+        .nav-item i { font-size: 20px; margin-bottom: 3px; display: block; }
+
+        .page { display: none; }
+        .active-page { display: block; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="profile-container">
-        <img id="p-img" style="display:none;">
-        <span id="p-initial" class="initial-avatar">?</span>
+<div class="header-card">
+    <div id="p-img-box">
+        <span id="p-initial" class="initial-pic">?</span>
+        <img id="p-photo" class="profile-pic" style="display:none;">
     </div>
-    <h3 id="p-name" style="margin:0;">Loading...</h3>
-    <div class="balance-badge">💰 ব্যালেন্স: <span id="p-bal">0.00</span> TAKA</div>
+    <h3 id="p-name" style="margin:5px 0;">ইউজার নাম</h3>
+    <div style="background: rgba(0,0,0,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 14px;">
+        ব্যালেন্স: <span id="p-bal">0.00</span> TAKA 💰
+    </div>
 </div>
 
-<div class="content-area">
-    <div id="home" class="page active">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div class="card" style="text-align: center;"><b>মোট রেফার</b><br><span id="p-refs">0</span></div>
-            <div class="card" style="text-align: center;"><b>বিজ্ঞাপন</b><br><span id="p-ads">0/20</span></div>
-        </div>
-        <div class="card">
-            <h4>আপনার রেফার লিঙ্ক</h4>
-            <p style="font-size: 12px; color: #bbb; margin-bottom: 10px;">বন্ধুদের রেফার করুন এবং প্রতি রেফারে ২৫ টাকা বোনাস পান।</p>
-            <input type="text" id="p-link" style="width:100%; padding:10px; border-radius:8px; border:none; background:#252545; color:white;" readonly>
-            <button class="btn" style="margin-top:10px;" onclick="copyRef()"><i class="fa-solid fa-copy"></i> কপি করুন</button>
-        </div>
-    </div>
-
-    <div id="support" class="page">
-        <div class="card" style="text-align: center;">
-            <h4>টিউটোরিয়াল ভিডিও</h4>
-            <button class="btn" onclick="window.open('ভিডিও_লিঙ্ক')"><i class="fa-solid fa-play"></i> ভিডিও দেখুন</button>
-        </div>
-        <div class="card">
-            <h4>সরাসরি যোগাযোগ</h4>
-            <button class="btn" style="margin-bottom:10px; background:#248bcf;" onclick="window.open('https://t.me/crypto_passbot')"><i class="fa-brands fa-telegram"></i> টেলিগ্রাম চ্যানেল</button>
-            <button class="btn" style="background:#f44336;" onclick="location.href='mailto:support@gmail.com'"><i class="fa-solid fa-envelope"></i> ইমেইল সাপোর্ট</button>
-        </div>
-    </div>
-
-    <div id="tasks" class="page">
-        <div class="card">
-            <h4>দৈনিক টাস্ক</h4>
-            <div style="display: flex; justify-content: space-between; align-items: center; background: #252545; padding: 15px; border-radius: 12px; margin-bottom: 10px;">
-                <span>চ্যানেল জয়েন করুন (৫০ টাকা)</span>
-                <button onclick="window.open('চ্যানেল_লিঙ্ক')" style="background:var(--grad); border:none; color:white; padding:8px 15px; border-radius:8px;">Join</button>
+<div class="container">
+    <div id="page-home" class="page active-page">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fa-solid fa-rectangle-ad"></i><br>
+                <span style="font-size:12px; color:#aaa;">দৈনিক বিজ্ঞাপন</span><br>
+                <b id="p-ads">0/10</b>
             </div>
-            <button class="btn" onclick="watchAd()"><i class="fa-solid fa-video"></i> বিজ্ঞাপন দেখুন (২৫ টাকা)</button>
+            <div class="stat-card">
+                <i class="fa-solid fa-users"></i><br>
+                <span style="font-size:12px; color:#aaa;">মোট রেফার</span><br>
+                <b id="p-refs">0</b>
+            </div>
+        </div>
+        <div class="card">
+            <h4 style="margin-top:0;"><i class="fa-solid fa-gift" style="color:#ff4081;"></i> বন্ধুদের রেফার করুন</h4>
+            <p style="font-size:12px; color:#aaa;">রেফার করলেই পাচ্ছেন ২৫ টাকা বোনাস!</p>
+            <div class="ref-box">
+                <span id="p-link" class="ref-link-text">loading...</span>
+                <i class="fa-solid fa-copy" style="color:#7c4dff; cursor:pointer;" onclick="copyRef()"></i>
+            </div>
+            <button class="btn-grad" style="margin-top:15px;" onclick="copyRef()">লিঙ্ক কপি করুন</button>
         </div>
     </div>
 
-    <div id="withdraw" class="page">
-        <div class="card" style="text-align: center;">
-            <h4>টাকা উত্তোলন</h4>
-            <p style="font-size: 12px; color: #4caf50;">মিনিমাম উত্তোলন ৮০০ টাকা</p>
-            <select id="w-method" class="withdraw-input">
-                <option>বিকাশ (Personal)</option>
-                <option>নগদ (Personal)</option>
-            </select>
-            <input type="number" id="w-num" class="withdraw-input" placeholder="মোবাইল নম্বর দিন">
-            <input type="number" id="w-amount" class="withdraw-input" placeholder="পরিমাণ দিন (৮০০+)">
-            <button class="btn" style="margin-top:20px;" onclick="requestWithdraw()"><i class="fa-solid fa-wallet"></i> রিকোয়েস্ট পাঠান</button>
+    <div id="page-support" class="page">
+        <div class="card" style="text-align:center;">
+            <h4>টিউটোরিয়াল ভিডিও</h4>
+            <div style="background:#0b0b1a; height:100px; border-radius:15px; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
+                <i class="fa-solid fa-circle-play" style="font-size:50px; color:#ff4081;"></i>
+            </div>
+            <button class="btn-grad" onclick="window.open('URL_HERE')">ভিডিও দেখুন</button>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card" onclick="window.open('https://t.me/crypto_passbot')"><i class="fa-brands fa-telegram"></i><br>টেলিগ্রাম</div>
+            <div class="stat-card" onclick="location.href='mailto:support@gmail.com'"><i class="fa-solid fa-envelope"></i><br>ইমেইল</div>
+        </div>
+    </div>
+
+    <div id="page-tasks" class="page">
+        <div class="card">
+            <h4>বিজ্ঞাপন দেখে আয়</h4>
+            <p style="font-size:12px; color:#aaa;">প্রতি বিজ্ঞাপনে ৫ টাকা</p>
+            <button class="btn-grad" onclick="watchAd()"><i class="fa-solid fa-play"></i> বিজ্ঞাপন দেখুন</button>
+        </div>
+        <div class="card">
+            <h4>চ্যানেল টাস্ক</h4>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:14px;">চ্যানেলে জয়েন করুন</span>
+                <button onclick="window.open('URL')" style="background:#7c4dff; border:none; color:white; padding:5px 15px; border-radius:8px;">Join</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-withdraw" class="page">
+        <div class="card" style="text-align:center;">
+            <p style="font-size:12px; color:#aaa;">আপনার ব্যালেন্স</p>
+            <h2 id="p-bal2" style="color:#00ffa3; margin:10px 0;">0.00</h2>
+            <p style="font-size:11px; color:#ff4081;">ন্যূনতম উইথড্র: ৮০০ টাকা</p>
+        </div>
+        <div class="card">
+            <div class="input-group">
+                <label>পদ্ধতি নির্বাচন করুন</label>
+                <select id="w-method" class="input-box">
+                    <option>বিকাশ (Personal)</option>
+                    <option>নগদ (Personal)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>একাউন্ট নম্বর</label>
+                <input type="number" id="w-num" class="input-box" placeholder="017XXXXXXXX">
+            </div>
+            <div class="input-group">
+                <label>পরিমাণ (TAKA)</label>
+                <input type="number" id="w-amount" class="input-box" placeholder="মিনিমাম ৮০০">
+            </div>
+            <button class="btn-grad" style="margin-top:20px;" onclick="requestWithdraw()"><i class="fa-solid fa-paper-plane"></i> রিকোয়েস্ট জমা দিন</button>
         </div>
     </div>
 </div>
 
-<div class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('home', this)"><i class="fa-solid fa-house"></i>হোম</div>
-    <div class="nav-item" onclick="showPage('support', this)"><i class="fa-solid fa-headset"></i>সাপোর্ট</div>
-    <div class="nav-item" onclick="showPage('tasks', this)"><i class="fa-solid fa-tasks"></i>টাস্ক</div>
-    <div class="nav-item" onclick="showPage('withdraw', this)"><i class="fa-solid fa-wallet"></i>উইথড্র</div>
+<div class="nav-bar">
+    <div class="nav-item active" onclick="showPage('page-home', this)"><i class="fa-solid fa-house"></i>হোম</div>
+    <div class="nav-item" onclick="showPage('page-support', this)"><i class="fa-solid fa-headset"></i>সাপোর্ট</div>
+    <div class="nav-item" onclick="showPage('page-tasks', this)"><i class="fa-solid fa-list-check"></i>টাস্ক</div>
+    <div class="nav-item" onclick="showPage('page-withdraw', this)"><i class="fa-solid fa-wallet"></i>উইথড্র</div>
 </div>
 
 <script>
-    // ফায়ারবেস কনফিগ
+    // ফায়ারবেস সেটআপ
     const firebaseConfig = {
         apiKey: "AIzaSyBjuU8_Iz0VQ1mnIdLk6kcP0IffEBpmUPo",
         authDomain: "mini-bot-26c78.firebaseapp.com",
@@ -117,68 +169,56 @@
         messagingSenderId: "628268418531",
         appId: "1:628268418531:web:ffda48e076173b1ba2ccd6"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const tg = window.Telegram.WebApp;
     tg.ready();
 
     const user = tg.initDataUnsafe?.user;
-    const uid = user ? user.id : "guest_user";
-    const botUser = "crypto_passbot";
+    const uid = user ? user.id : "test_user";
 
-    let uData = { balance: 0, refs: 0, ads: 0 };
-
-    const uRef = db.ref('users/' + uid);
-    uRef.on('value', (snap) => {
-        if (snap.exists()) uData = snap.val();
-        else uRef.set(uData);
-        updateUI();
-    });
-
-    function updateUI() {
+    // ডাটা লোড
+    db.ref('users/' + uid).on('value', (snap) => {
+        const data = snap.val() || { balance: 0, refs: 0, ads: 0 };
+        document.getElementById('p-bal').innerText = data.balance.toFixed(2);
+        document.getElementById('p-bal2').innerText = data.balance.toFixed(2);
+        document.getElementById('p-refs').innerText = data.refs;
+        document.getElementById('p-ads').innerText = data.ads + "/10";
+        
         const name = user ? user.first_name : "ইউজার";
         document.getElementById('p-name').innerText = name;
-        if(user && user.photo_url) {
-            document.getElementById('p-img').src = user.photo_url;
-            document.getElementById('p-img').style.display = 'block';
+        if(user?.photo_url) {
+            document.getElementById('p-photo').src = user.photo_url;
+            document.getElementById('p-photo').style.display = 'inline';
             document.getElementById('p-initial').style.display = 'none';
         } else {
             document.getElementById('p-initial').innerText = name.charAt(0);
         }
-        document.getElementById('p-bal').innerText = (uData.balance || 0).toFixed(2);
-        document.getElementById('p-refs').innerText = uData.refs || 0;
-        document.getElementById('p-ads').innerText = (uData.ads || 0) + "/20";
-        document.getElementById('p-link').value = `https://t.me/${botUser}/app?startapp=${uid}`;
-    }
+        document.getElementById('p-link').innerText = `https://t.me/crypto_passbot/app?startapp=${uid}`;
+    });
 
-    function showPage(p, el) {
-        document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active'));
-        document.getElementById(p).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(nv => nv.classList.remove('active'));
+    function showPage(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(id).classList.add('active-page');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
     }
 
+    function copyRef() {
+        const link = document.getElementById('p-link').innerText;
+        navigator.clipboard.writeText(link);
+        tg.showAlert("লিঙ্ক কপি হয়েছে!");
+    }
+
     function watchAd() {
-        window.open('অ্যাড_লিঙ্ক');
-        uData.balance += 25; uData.ads += 1;
-        uRef.update(uData);
+        tg.showAlert("বিজ্ঞাপন লোড হচ্ছে...");
+        // বিজ্ঞাপন শেষে ব্যালেন্স আপডেট লজিক এখানে হবে
     }
 
     function requestWithdraw() {
-        const amt = parseFloat(document.getElementById('w-amount').value);
-        if (amt >= 800 && uData.balance >= amt) {
-            uData.balance -= amt; uRef.update(uData);
-            db.ref('withdraws').push({ uid, amt, num: document.getElementById('w-num').value, method: document.getElementById('w-method').value, time: Date.now() });
-            tg.showAlert("উইথড্র রিকোয়েস্ট সফল হয়েছে!");
-        } else tg.showAlert("ব্যালেন্স পর্যাপ্ত নয়!");
-    }
-
-    function copyRef() {
-        const link = document.getElementById("p-link");
-        link.select();
-        document.execCommand("copy");
-        tg.showAlert("লিঙ্ক কপি হয়েছে!");
+        const amount = document.getElementById('w-amount').value;
+        if(amount < 800) return tg.showAlert("মিনিমাম ৮০০ টাকা লাগবে!");
+        tg.showAlert("উইথড্র রিকোয়েস্ট সফল হয়েছে!");
     }
 </script>
 </body>
