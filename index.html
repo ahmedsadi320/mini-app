@@ -12,40 +12,36 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Arial', sans-serif; background-color: #0d1117; color: white; padding-bottom: 80px; }
         
-        /* Navigation Logic */
         .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* UI Elements */
-        .header-card { background: linear-gradient(135deg, #1f2937, #111827); padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 12px; margin: 15px; border: 1px solid #374151; }
+        .header { background: linear-gradient(135deg, #1f2937, #111827); padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 12px; margin: 15px; border: 1px solid #374151; }
         .avatar { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #3b82f6; }
-        .balance-box { background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 4px 12px; border-radius: 20px; font-size: 13px; border: 1px solid #3b82f6; display: inline-block; margin-top: 5px; }
+        .balance-badge { background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 4px 12px; border-radius: 20px; font-size: 13px; border: 1px solid #3b82f6; display: inline-block; margin-top: 5px; }
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 15px; }
         .stat-item { background: #161b22; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #30363d; }
-        .stat-item h3 { color: #3b82f6; margin-top: 5px; }
 
         .card { background: #161b22; padding: 20px; border-radius: 15px; margin: 15px; border: 1px solid #30363d; }
-        .btn-blue { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
+        .btn-action { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-outline { background: transparent; border: 1px solid #3b82f6; color: #3b82f6; padding: 10px; border-radius: 8px; width: 100%; margin-top: 10px; }
         
         .input-field { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; outline: none; }
 
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #161b22; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #30363d; }
-        .nav-link { color: #8b949e; text-decoration: none; font-size: 11px; text-align: center; flex: 1; }
-        .nav-link.active { color: #3b82f6; }
-        .nav-icon { font-size: 20px; display: block; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #161b22; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #30363d; z-index: 999; }
+        .nav-btn { color: #8b949e; text-decoration: none; font-size: 11px; text-align: center; flex: 1; border:none; background:none; }
+        .nav-btn.active { color: #3b82f6; font-weight: bold; }
+        .nav-btn span { font-size: 20px; display: block; }
     </style>
 </head>
 <body>
 
-    <div class="header-card">
+    <div class="header">
         <img id="u-avatar" class="avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
         <div>
-            <h2 id="u-name">Loading... ✔️</h2>
-            <div class="balance-box">৳ <span id="u-balance">0.00</span> টাকা 💰</div>
+            <h2 id="u-name">Saaaadi ✔️</h2>
+            <div class="balance-badge">৳ <span id="u-balance">0.00</span> টাকা 💰</div>
         </div>
     </div>
 
@@ -55,58 +51,58 @@
             <div class="stat-item"><p style="font-size:10px; color:#888;">Referrals</p><h3 id="u-ref">0</h3></div>
         </div>
         <div class="card">
-            <h4>Refer & Earn More!</h4>
-            <p style="font-size: 12px; color:#888; margin: 8px 0;">প্রতি রেফারে আয় ৪০ টাকা। বন্ধুদের ইনভাইট করুন।</p>
+            <h4>Refer & Earn!</h4>
+            <p style="font-size: 11px; color:#888; margin: 8px 0;">প্রতি রেফারে আয় ৪০ টাকা।</p>
             <div id="ref-link" style="font-size: 10px; color:#3b82f6; background:#0d1117; padding:10px; border-radius:5px; border:1px dashed #3b82f6; word-break:break-all;">...</div>
-            <button onclick="copyRef()" class="btn-blue" style="margin-top:10px;">Copy Link</button>
+            <button onclick="copyRef()" class="btn-action">Copy Link</button>
         </div>
     </div>
 
     <div id="support" class="page">
         <h3>🎧 সাপোর্ট</h3>
         <div class="card" style="text-align:center;">
-            <div style="font-size: 40px;">🎬</div>
+            <div style="font-size: 30px;">🎬</div>
             <h4>টিউটোরিয়াল ভিডিও</h4>
-            <button onclick="window.open('YOUR_YT_LINK')" class="btn-blue" style="margin-top:10px;">টিউটোরিয়াল দেখুন</button>
+            <button onclick="window.open('আপনার_YouTube_লিঙ্ক_এখানে')" class="btn-action">টিউটোরিয়াল দেখুন</button>
         </div>
         <div class="stats-grid">
             <div class="stat-item" onclick="window.open('https://t.me/your_tg')">✈️<br>Telegram</div>
-            <div class="stat-item" onclick="window.open('mailto:help@redchilli.com')">✉️<br>Email</div>
+            <div class="stat-item" onclick="window.open('mailto:help@mail.com')">✉️<br>Email</div>
             <div class="stat-item">❓<br>FAQ</div>
-            <div class="stat-item">💬<br>Live Chat</div>
+            <div class="stat-item" onclick="window.open('YOUR_LIVE_CHAT_LINK')">💬<br>Live Chat</div>
         </div>
     </div>
 
     <div id="tasks" class="page">
-        <h3>📋 Complete Tasks</h3>
-        <div id="ad-list"></div>
+        <h3>📋 Tasks (10)</h3>
+        <div id="ad-container"></div>
         <div class="card">
             <h4>Join Channel</h4>
-            <button onclick="window.open('https://t.me/your_channel')" class="btn-outline">Open Channel</button>
+            <button onclick="window.open('আপনার_টেলিগ্রাম_চ্যানেল_লিঙ্ক')" class="btn-outline">Open Channel</button>
         </div>
     </div>
 
     <div id="withdraw" class="page">
         <div class="card">
-            <h3 style="color:#ef4444;">টাকা উত্তোলন</h3>
+            <h3 style="color:#f87171;">টাকা উত্তোলন</h3>
             <p style="font-size:11px; color:#888; margin: 10px 0;">ℹ️ আমরা পার্সোনাল নম্বর ছাড়া পেমেন্ট করি না।</p>
             
             <select id="w-method" class="input-field">
-                <option>bKash Personal</option>
-                <option>Nagad Personal</option>
+                <option value="bKash">bKash Personal</option>
+                <option value="Nagad">Nagad Personal</option>
             </select>
-            <input type="text" id="w-phone" placeholder="আপনার নম্বর" class="input-field">
+            <input type="text" id="w-phone" placeholder="নম্বর লিখুন" class="input-field">
             <input type="number" id="w-amount" placeholder="ন্যূনতম ৮০০ টাকা" class="input-field">
             
-            <button onclick="processWithdraw()" class="btn-blue" style="background:#059669;">🚀 রিকোয়েস্ট জমা দিন</button>
+            <button onclick="submitWithdraw()" class="btn-action" style="background:#059669;">🚀 রিকোয়েস্ট জমা দিন</button>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <div class="nav-link active" onclick="switchTab('home', this)"><span class="nav-icon">🏠</span>Home</div>
-        <div class="nav-link" onclick="switchTab('support', this)"><span class="nav-icon">🎧</span>Support</div>
-        <div class="nav-link" onclick="switchTab('tasks', this)"><span class="nav-icon">📋</span>Tasks</div>
-        <div class="nav-link" onclick="switchTab('withdraw', this)"><span class="nav-icon">💰</span>Withdraw</div>
+    <nav class="nav-bar">
+        <button class="nav-btn active" onclick="showPage('home', this)"><span>🏠</span>Home</button>
+        <button class="nav-btn" onclick="showPage('support', this)"><span>🎧</span>Support</button>
+        <button class="nav-btn" onclick="showPage('tasks', this)"><span>📋</span>Tasks</button>
+        <button class="nav-btn" onclick="showPage('withdraw', this)"><span>💰</span>Withdraw</button>
     </nav>
 
     <script>
@@ -123,75 +119,63 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Telegram Setup
+        // Telegram Integration
         const tg = window.Telegram.WebApp;
         tg.ready();
-        tg.expand();
-
-        const userId = tg.initDataUnsafe?.user?.id || "guest_user";
+        const userId = tg.initDataUnsafe?.user?.id || "guest_123";
         const userRef = db.ref('users/' + userId);
 
-        // Fetch User Data
+        // Data Management
         userRef.on('value', (snap) => {
             const data = snap.val();
             if(data) {
-                document.getElementById('u-name').innerText = data.name + " ✔️";
+                document.getElementById('u-name').innerText = (data.name || "User") + " ✔️";
                 document.getElementById('u-balance').innerText = data.balance.toFixed(2);
                 document.getElementById('u-ads').innerText = (data.adsWatched || 0) + " / 10";
                 document.getElementById('u-ref').innerText = data.referrals || 0;
             } else {
-                userRef.set({
-                    name: tg.initDataUnsafe?.user?.first_name || "User",
-                    balance: 0.00,
-                    referrals: 0,
-                    adsWatched: 0
-                });
+                userRef.set({ name: tg.initDataUnsafe?.user?.first_name || "User", balance: 0.00, referrals: 0, adsWatched: 0 });
             }
         });
 
         document.getElementById('ref-link').innerText = "https://t.me/Red_Chilii_bot/app?startapp=" + userId;
 
-        // Render Tasks
-        const adList = document.getElementById('ad-list');
+        // Render 9 Ads
+        const container = document.getElementById('ad-container');
         for(let i=1; i<=9; i++) {
-            adList.innerHTML += `
-                <div class="card" style="margin: 10px 15px;">
-                    <p>Ad Task #${i}</p>
-                    <button onclick="watchAd()" class="btn-outline">Watch & Verify ✅</button>
-                </div>
-            `;
+            container.innerHTML += `<div class="card" style="margin: 10px 0;"><p>Ad #${i}</p><button onclick="clickAd()" class="btn-outline">Verify Ad ✅</button></div>`;
         }
 
         // Functions
-        function switchTab(id, el) {
+        function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            el.classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
 
-        function watchAd() {
-            window.open('YOUR_AD_LINK'); // বসিয়ে দিন আপনার অ্যাড লিঙ্ক
-            userRef.transaction(data => {
-                if (data) {
-                    data.balance += 2;
-                    data.adsWatched = (data.adsWatched || 0) + 1;
+        function clickAd() {
+            window.open('আপনার_ADSTERRA_বা_MONETAG_লিঙ্ক'); // আপনার অ্যাড লিংক এখানে দিন
+            userRef.transaction(d => {
+                if(d) {
+                    d.balance += 2; // প্রতি অ্যাডে ২ টাকা
+                    d.adsWatched = (d.adsWatched || 0) + 1;
                 }
-                return data;
+                return d;
             });
-            tg.showAlert("২ টাকা যোগ করা হয়েছে!");
+            tg.showAlert("অ্যাড দেখার জন্য ২ টাকা যোগ হয়েছে!");
         }
 
-        function processWithdraw() {
-            const amount = parseFloat(document.getElementById('w-amount').value);
+        function submitWithdraw() {
+            const amt = parseFloat(document.getElementById('w-amount').value);
             const phone = document.getElementById('w-phone').value;
-            if(amount < 800 || !phone) return tg.showAlert("সঠিক তথ্য দিন!");
+            if(amt < 800 || !phone) return tg.showAlert("ন্যূনতম ৮০০ টাকা দিন!");
 
-            userRef.once('value').then(snap => {
-                const bal = snap.val().balance;
-                if(bal >= amount) {
-                    userRef.update({ balance: bal - amount });
-                    tg.showAlert("সফল! ব্যালেন্স থেকে " + amount + " টাকা কাটা হয়েছে।");
+            userRef.once('value').then(s => {
+                const bal = s.val().balance;
+                if(bal >= amt) {
+                    userRef.update({ balance: bal - amt });
+                    tg.showAlert("রিকোয়েস্ট সফল! ব্যালেন্স থেকে " + amt + " টাকা কাটা হয়েছে।");
                 } else {
                     tg.showAlert("পর্যাপ্ত ব্যালেন্স নেই!");
                 }
@@ -201,8 +185,8 @@
         function copyRef() {
             const link = document.getElementById('ref-link').innerText;
             navigator.clipboard.writeText(link);
-            tg.showAlert("লিঙ্ক কপি হয়েছে!");
+            tg.showAlert("Link Copied!");
         }
     </script>
 </body>
-</html>
+    </html>
