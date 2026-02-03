@@ -46,7 +46,7 @@
         <img id="u-pfp" class="u-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
         <div class="u-info">
             <h2 id="u-name">Loading... <span style="color:#3b82f6">✔️</span></h2>
-            <p>ব্যালেন্স: <span id="u-bal">0.00</span> টাকা 💰</p>
+            <div class="balance-badge">৳ <span id="u-balance">0.00</span> টাকা 💰</div>
         </div>
     </div>
 
@@ -119,7 +119,7 @@
             adList.innerHTML += `
                 <div class="card">
                     <div class="task-icon">📹</div>
-                    <div class="task-title">Rewarded Ad #${i}</div>
+                    <div class="task-title">Rewarded Ad </div>
                     <div class="task-sub">অ্যাড দেখে আয় করতে ভেরিফাই করুন!</div>
                     <button onclick="watchAd()" class="btn-blue">Verify ☑️</button>
                     <p style="font-size:11px; color:#4b5563; margin-top:12px;">পুরস্কার পেতে ১৫ সেকেন্ডের জন্য বিজ্ঞাপনে থাকুন।</p>
@@ -157,7 +157,7 @@
         }
 
         function copyRef() {
-            navigator.clipboard.writeText("https://t.me/Red_Chilii_bot/app?startapp=" + uId);
+            navigator.clipboard.writeText("https://t.me/crypto_passbot" + uId);
             tg.showAlert("লিঙ্ক কপি হয়েছে!");
         }
     </script>
