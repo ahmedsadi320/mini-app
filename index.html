@@ -43,20 +43,27 @@
 </head>
 <body>
 
-    <div class="header">
-        <img id="u-pfp" class="u-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+    <divdiv class="header">
+        <img id="user-pfp" class="u-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
         <div>
-            <div id="u-name" class="u-name-text">Loading... <span style="color:#3b82f6">✔️</span></div>
-            <div style="font-size: 14px; color: #8b949e;">ব্যালেন্স: <span id="u-bal">0.00</span> টাকা 💰</div>
+            <div id="user-name" class="u-name-text">Loading... <span style="color:#3b82f6">✔️</span></div>
+            <div class="u-balance-text">ব্যালেন্স: <span id="u-bal">0.00</span> টাকা 💰</div>
         </div>
     </div>
 
     <div id="home" class="page active-page">
-        <h2 style="margin-bottom:15px;">Dashboard</h2>
-        <div class="card">
-            <p style="color:#8b949e; font-size:12px;">রেফার সংখ্যা: <span id="u-ref" style="color:#3b82f6; font-weight:bold;">0</span></p>
-            <div id="ref-url" style="background:#0d1117; padding:12px; border-radius:10px; border:1px dashed #30363d; font-size:10px; color:#3b82f6; margin:15px 0; word-break:break-all;">...</div>
-            <button onclick="copyRef()" class="btn-blue">Copy Referral Link</button>
+        <h2 style="margin-bottom:20px;">Dashboard</h2>
+        <div class="stats-grid">
+            <div class="stat-box"><p>Daily Ads Watched</p><h2 id="u-ads">0 / 10</h2></div>
+            <div class="stat-box"><p>Total Referrals</p><h2 id="u-ref">0</h2></div>
+        </div>
+        <div class="card" style="text-align:center;">
+            <h3>Refer & Earn More!</h3>
+            <p style="font-size:12px; color:#8b949e; margin:15px 0;">রেফার বোনাস পেতে লিঙ্কটি কপি করে বন্ধুদের মাঝে শেয়ার করুন। প্রতি রেফারে ৪০ টাকা।</p>
+            <div id="ref-url" style="background:#0d1117; padding:12px; border-radius:8px; border:1px dashed #30363d; font-size:11px; color:#3b82f6; margin-bottom:15px; word-break:break-all;">...</div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="copyRef()" class="btn-blue">Copy Referral Link</button>
+                <button class="btn-green">Share Now</button>
         </div>
     </div>
 
