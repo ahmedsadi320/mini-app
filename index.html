@@ -7,158 +7,206 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <style>
-        /* Global Theme */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #0d1117; color: white; padding-bottom: 80px; }
-        .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        /* আপনার স্ক্রিনশটের হুবহু ডার্ক থিম */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #0d1117; color: white; padding-bottom: 90px; overflow-x: hidden; }
+        
+        .page { display: none; padding: 20px; animation: fadeIn 0.2s; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* User Header */
-        .header { display: flex; align-items: center; gap: 12px; padding: 15px; }
-        .u-avatar { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #3b82f6; }
-        .u-info h2 { font-size: 18px; display: flex; align-items: center; gap: 5px; }
-        .u-info p { font-size: 13px; color: #8b949e; }
-
-        /* Task Cards Style */
-        .card { background: #161b22; border: 1px solid #30363d; border-radius: 18px; padding: 25px; margin-bottom: 20px; text-align: center; }
-        .task-icon { font-size: 50px; color: #3b82f6; margin-bottom: 15px; }
-        .task-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; color: #f0f6fc; }
-        .task-sub { font-size: 13px; color: #8b949e; margin-bottom: 20px; }
+        /* Header Style */
+        .header { display: flex; align-items: center; gap: 15px; padding: 25px 20px; background: #0d1117; }
+        .u-avatar { width: 62px; height: 62px; border-radius: 50%; border: 2.5px solid #3b82f6; padding: 2px; background: #161b22; }
+        .u-name-text { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
         
-        /* Buttons */
-        .btn-blue { background: #007bff; color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-outline { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
-        .claim-text { color: #10b981; font-size: 13px; margin-top: 15px; display: none; align-items: center; justify-content: center; gap: 5px; }
+        /* আপনার দেওয়া নির্দিষ্ট ব্যালেন্স ফরম্যাট */
+        .balance-badge { font-size: 15px; color: #8b949e; margin-top: 6px; font-weight: 500; }
 
-        /* Navigation */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #161b22; border-top: 1px solid #30363d; display: flex; justify-content: space-around; padding: 10px 0; }
-        .nav-item { color: #8b949e; text-align: center; font-size: 11px; cursor: pointer; flex: 1; }
+        /* Dashboard Stats */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-box { background: #161b22; border: 1px solid #30363d; border-radius: 18px; padding: 22px 10px; text-align: center; }
+        .stat-box p { font-size: 12px; color: #8b949e; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-box h2 { font-size: 26px; color: #3b82f6; font-weight: 800; }
+
+        /* Card System */
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 24px; padding: 25px; margin-bottom: 20px; text-align: center; }
+        .card h3 { font-size: 20px; margin-bottom: 12px; font-weight: 700; }
+        .card p { font-size: 13.5px; color: #8b949e; line-height: 1.6; margin-bottom: 20px; }
+
+        /* Buttons */
+        .btn-blue { background: #007bff; color: white; border: none; padding: 15px; border-radius: 14px; width: 100%; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn-grad { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; border: none; padding: 16px; border-radius: 14px; width: 100%; font-weight: 700; font-size: 16px; }
+        .btn-withdraw { background: linear-gradient(90deg, #f80759 0%, #bc4e9c 100%); color: white; border: none; padding: 16px; border-radius: 16px; width: 100%; font-weight: 700; font-size: 17px; }
+        .btn-outline { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 14px; border-radius: 12px; font-weight: 600; width: 100%; }
+
+        /* Support Grid */
+        .supp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .supp-item { background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 22px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .supp-item:active { background: #1c2128; }
+        .supp-icon { font-size: 26px; margin-bottom: 10px; display: block; color: #ff007c; }
+        .supp-item span { font-size: 14px; font-weight: 600; display: block; }
+
+        /* Withdraw Input */
+        .w-label { display: block; font-size: 13.5px; color: #8b949e; margin-bottom: 10px; text-align: left; }
+        .w-input { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 15px; color: white; font-size: 15px; margin-bottom: 20px; outline: none; }
+        .w-input:focus { border-color: #3b82f6; }
+
+        /* Bottom Nav */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #161b22; border-top: 1px solid #30363d; display: flex; justify-content: space-around; padding: 12px 0; z-index: 9999; }
+        .nav-item { color: #8b949e; text-align: center; font-size: 12px; flex: 1; border: none; background: none; cursor: pointer; }
+        .nav-item i { display: block; font-size: 24px; margin-bottom: 5px; }
         .nav-item.active { color: #3b82f6; }
-        .nav-item i { display: block; font-size: 20px; margin-bottom: 3px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <img id="u-pfp" class="u-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-        <div class="u-info">
-            <h2 id="u-name">Loading... <span style="color:#3b82f6">✔️</span></h2>
-            <p>ব্যালেন্স: <span id="u-bal">0.00</span> টাকা 💰</p>
+        <img class="u-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+        <div>
+            <div id="u-name-display" class="u-name-text">User <span style="color:#3b82f6">✔️</span></div>
+            <div class="balance-badge">৳ <span id="u-balance">0.00</span> টাকা 💰</div>
         </div>
     </div>
 
     <div id="home" class="page active-page">
+        <h2 style="margin-bottom:20px; font-size: 24px;">Dashboard</h2>
+        <div class="stats-grid">
+            <div class="stat-box"><p>Ads Watched</p><h2 id="u-ads">0 / 10</h2></div>
+            <div class="stat-box"><p>Total Referrals</p><h2 id="u-ref">0</h2></div>
+        </div>
         <div class="card">
-            <h3>Dashboard</h3>
-            <p style="margin-top:10px;">Refer Link: <span id="ref-url" style="color:#3b82f6; font-size:10px;">...</span></p>
-            <button onclick="copyRef()" class="btn-blue" style="margin-top:15px;">Copy Link</button>
+            <h3>Refer & Earn More!</h3>
+            <p>বন্ধুদের ইনভাইট করে প্রতি সফল রেফারে ৪০ টাকা আয় করুন।</p>
+            <div id="ref-url" style="background:#0d1117; padding:15px; border-radius:12px; border:1px dashed #30363d; font-size:11px; color:#58a6ff; margin-bottom:20px; word-break:break-all;">Loading Link...</div>
+            <button onclick="copyRef()" class="btn-blue">Copy Referral Link</button>
         </div>
     </div>
 
     <div id="support" class="page">
-        <h2 style="margin-bottom:15px;">🎧 সাপোর্ট</h2>
-        <div class="card">
-            <div style="font-size:40px; color:#e91e63;">▶️</div>
+        <h2 style="margin-bottom:20px; font-size: 24px;">🎧 Support</h2>
+        <div class="card" style="background: linear-gradient(145deg, #161b22, #0d1117); border: 1px solid #3b82f633;">
+            <div style="font-size: 55px; margin-bottom: 15px;">▶️</div>
             <h3>টিউটোরিয়াল ভিডিও</h3>
-            <button onclick="window.open('আপনার_ভিডিও_লিঙ্ক')" class="btn-blue" style="margin-top:15px;">ভিডিও দেখুন</button>
+            <p>অ্যাপটি কিভাবে ব্যবহার করবেন ভিডিওটি দেখে শিখে নিন।</p>
+            <button onclick="window.open('YOUR_YOUTUBE_LINK')" class="btn-grad">টিউটোরিয়াল দেখুন</button>
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button onclick="window.open('https://t.me/আপনার_ইউজারনেম')" class="btn-outline">✈️ টেলিগ্রাম</button>
-            <button onclick="window.open('mailto:আপনার_ইমেইল')" class="btn-outline">✉️ ইমেইল</button>
-            <button onclick="window.open('আপনার_লাইভ_চ্যাট_লিঙ্ক')" class="btn-outline">💬 চ্যাট</button>
-            <button onclick="window.open('FAQ_লিঙ্ক')" class="btn-outline">❓ FAQ</button>
+        <h4 style="margin: 25px 0 15px; font-size: 16px; color: #8b949e;">অন্যান্য সাহায্য</h4>
+        <div class="supp-grid">
+            <div class="supp-item" onclick="window.open('https://t.me/YOUR_TELEGRAM_LINK')"><span class="supp-icon">✈️</span><span>টেলিগ্রাম</span></div>
+            <div class="supp-item" onclick="window.open('mailto:YOUR_EMAIL')"><span class="supp-icon">📧</span><span>ইমেইল</span></div>
+            <div class="supp-item" onclick="window.open('YOUR_LIVE_CHAT_LINK')"><span class="supp-icon">💬</span><span>লাইভ চ্যাট</span></div>
+            <div class="supp-item" onclick="tg.showAlert('Coming Soon')"><span class="supp-icon">❓</span><span>FAQ</span></div>
         </div>
     </div>
 
     <div id="tasks" class="page">
-        <h2 style="margin-bottom:20px;">Complete Tasks</h2>
-        
+        <h2 style="margin-bottom:20px; font-size: 24px;">Complete Tasks</h2>
         <div id="ad-list"></div>
-
         <div class="card">
-            <div class="task-icon" style="background:#1d4ed8; width:55px; height:55px; border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; color:white;">✈️</div>
-            <div class="task-title">Join our Telegram Channel</div>
-            <div class="task-sub">চ্যানেলে জয়েন করুন, তারপর ফিরে এসে "Check & Claim" দিন।</div>
-            <div style="display:flex; gap:10px;">
-                <button onclick="window.open('আপনার_টেলিগ্রাম_চ্যানেল_লিঙ্ক')" class="btn-blue" style="flex:1; background:#007bff;">Open Channel</button>
-                <button onclick="claimBonus()" class="btn-outline" style="flex:1;">Check & Claim</button>
+            <div style="background:#007bff; width:65px; height:65px; border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; font-size:32px;">✈️</div>
+            <h3>Join Telegram Channel</h3>
+            <p>চ্যানেলে জয়েন করে ১৫ সেকেন্ড অপেক্ষা করুন। বোনাস ৪০ টাকা।</p>
+            <button id="join-btn" onclick="handleTask('join-btn', 'YOUR_CHANNEL_LINK', 40)" class="btn-blue">Join & Claim</button>
+        </div>
+    </div>
+
+    <div id="withdraw" class="page">
+        <h2 style="margin-bottom:20px; font-size: 24px;">💰 Withdraw</h2>
+        <div class="card" style="padding: 25px; text-align: left;">
+            <div style="background: rgba(59, 130, 246, 0.1); padding: 18px; border-radius: 16px; margin-bottom: 25px; border: 1px solid rgba(59, 130, 246, 0.2);">
+                <p style="color:#3b82f6; font-weight:700; font-size: 14.5px;">ℹ️ ন্যূনতম উত্তোলনযোগ্য: 800.00 TAKA</p>
+                <p style="color:#8b949e; font-size: 13px; margin-top: 6px;">👥 ন্যূনতম রেফারেল প্রয়োজন: 18 জন</p>
             </div>
-            <div id="claim-success" class="claim-text">✅ Channel bonus claimed</div>
+            
+            <label class="w-label">পদ্ধতি নির্বাচন করুন</label>
+            <select class="w-input" style="appearance: none;"><option>বিকাশ</option><option>নগদ</option></select>
+            
+            <label class="w-label">একাউন্ট নম্বর</label>
+            <input type="text" class="w-input" placeholder="01XXXXXXXXX">
+            
+            <label class="w-label">Amount (TAKA)</label>
+            <input type="number" class="w-input" placeholder="Min 800.00">
+            
+            <button class="btn-withdraw">🚀 রিকোয়েস্ট জমা দিন</button>
         </div>
     </div>
 
     <nav class="nav-bar">
-        <div class="nav-item active" onclick="nav('home', this)"><i>🏠</i>Home</div>
-        <div class="nav-item" onclick="nav('support', this)"><i>🎧</i>Support</div>
-        <div class="nav-item" onclick="nav('tasks', this)"><i>📋</i>Tasks</div>
-        <div class="nav-item" onclick="nav('withdraw', this)"><i>💰</i>Withdraw</div>
+        <button class="nav-item active" onclick="nav('home', this)"><i>🏠</i>Home</button>
+        <button class="nav-item" onclick="nav('support', this)"><i>🎧</i>Support</button>
+        <button class="nav-item" onclick="nav('tasks', this)"><i>📋</i>Tasks</button>
+        <button class="nav-item" onclick="nav('withdraw', this)"><i>💰</i>Withdraw</button>
     </nav>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBjuU8_IzOVQ1mnIdLk6kcP0IffEBpmUPo",
-            databaseURL: "https://mini-bot-26c78-default-rtdb.firebaseio.com",
-            projectId: "mini-bot-26c78",
-        };
+        /* Firebase Configuration */
+        const firebaseConfig = { apiKey: "AIzaSy...", databaseURL: "https://mini-bot-26c78...", projectId: "mini-bot-26c78" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const tg = window.Telegram.WebApp;
+        tg.expand();
 
-        // User Setup
         const user = tg.initDataUnsafe?.user;
         const uId = user?.id || "guest";
         const uRef = db.ref('users/' + uId);
 
-        // ৯টি অ্যাড কার্ড তৈরি
+        uRef.on('value', (s) => {
+            const d = s.val() || {balance:0, referrals:0, adsWatched:0};
+            document.getElementById('u-balance').innerText = d.balance.toFixed(2);
+            document.getElementById('u-ref').innerText = d.referrals;
+            document.getElementById('u-ads').innerText = (d.adsWatched || 0) + " / 10";
+            document.getElementById('u-name-display').innerHTML = (user?.first_name || "User") + ` <span style="color:#3b82f6">✔️</span>`;
+        });
+
+        /* ৯টি অ্যাড টাস্ক তৈরি */
         const adList = document.getElementById('ad-list');
         for(let i=1; i<=9; i++) {
             adList.innerHTML += `
-                <div class="card">
-                    <div class="task-icon">📹</div>
-                    <div class="task-title">Rewarded Ad #${i}</div>
-                    <div class="task-sub">অ্যাড দেখে আয় করতে ভেরিফাই করুন!</div>
-                    <button onclick="watchAd()" class="btn-blue">Verify ☑️</button>
-                    <p style="font-size:11px; color:#4b5563; margin-top:12px;">পুরস্কার পেতে ১৫ সেকেন্ডের জন্য বিজ্ঞাপনে থাকুন।</p>
-                </div>`;
+            <div class="card">
+                <div style="font-size:50px; color:#3b82f6; margin-bottom:12px;">📹</div>
+                <h3>Rewarded Ad #${i}</h3>
+                <p>পুরস্কার পেতে বিজ্ঞাপনে ১৫ সেকেন্ড সময় কাটান।</p>
+                <button id="ad-${i}" onclick="handleTask('ad-${i}', 'YOUR_AD_LINK', 25)" class="btn-blue">Verify ☑️</button>
+            </div>`;
         }
 
-        // ডাটা আপডেট
-        uRef.on('value', (s) => {
-            const d = s.val() || { balance: 0, channelClaimed: false };
-            document.getElementById('u-bal').innerText = d.balance.toFixed(2);
-            document.getElementById('u-name').innerHTML = (user?.first_name || "User") + ` <span style="color:#3b82f6">✔️</span>`;
-            if(d.channelClaimed) document.getElementById('claim-success').style.display = 'flex';
-        });
-
-        // অ্যাড দেখা ও ২৫ টাকা বোনাস
-        function watchAd() {
-            window.open('আপনার_অ্যাড_লিঙ্ক_এখানে');
-            uRef.transaction(d => {
-                if(d) { d.balance += 25; } // প্রতি অ্যাডে ২৫ টাকা
-                return d;
-            });
-            tg.showAlert("অভিনন্দন! ২৫ টাকা আপনার ব্যালেন্সে যোগ হয়েছে।");
+        /* ১৫ সেকেন্ডের বাধ্যতামূলক থাকার শর্ত */
+        function handleTask(btnId, link, amount) {
+            const btn = document.getElementById(btnId);
+            window.open(link);
+            let timeLeft = 15;
+            btn.disabled = true;
+            btn.style.opacity = "0.6";
+            
+            const timer = setInterval(() => {
+                btn.innerText = `অপেক্ষা করুন (${timeLeft}s)`;
+                timeLeft--;
+                if(timeLeft < 0) {
+                    clearInterval(timer);
+                    btn.innerText = "Claimed ✅";
+                    uRef.transaction(d => { 
+                        if(d){ 
+                            d.balance += amount; 
+                            if(amount == 25) d.adsWatched += 1;
+                        } 
+                        return d; 
+                    });
+                    tg.showAlert(`${amount} টাকা ব্যালেন্সে যোগ হয়েছে!`);
+                }
+            }, 1000);
         }
 
-        function claimBonus() {
-            uRef.update({ channelClaimed: true, balance: firebase.database.ServerValue.increment(10) });
-            tg.showAlert("চ্যানেল বোনাস ১০ টাকা ক্লেইম করা হয়েছে!");
-        }
+        const refLink = `https://t.me/Red_Chilii_bot/app?startapp=${uId}`;
+        document.getElementById('ref-url').innerText = refLink;
+        function copyRef() { navigator.clipboard.writeText(refLink); tg.showAlert("লিঙ্ক কপি হয়েছে!"); }
 
         function nav(id, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
             document.getElementById(id).classList.add('active-page');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             el.classList.add('active');
-        }
-
-        function copyRef() {
-            navigator.clipboard.writeText("https://t.me/Red_Chilii_bot/app?startapp=" + uId);
-            tg.showAlert("লিঙ্ক কপি হয়েছে!");
         }
     </script>
 </body>
