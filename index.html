@@ -57,16 +57,18 @@
     </div>
 
     <div id="home" class="page active-page">
-        <h2 style="margin-bottom:15px;">Dashboard</h2>
+        <h2 class="section-title">Dashboard</h2>
         <div class="stats-grid">
             <div class="stat-box"><p>Daily Ads Watched</p><h2 id="u-ads">0 / 10</h2></div>
             <div class="stat-box"><p>Total Referrals</p><h2 id="u-ref">0</h2></div>
         </div>
         <div class="card">
             <h3>Refer & Earn More!</h3>
-            <p style="font-size: 12px; margin-bottom: 15px;">প্রতি রেফারে আয় ৪০ টাকা।</p>
-            <div id="ref-url" style="background:#0d1117; padding:10px; border-radius:8px; border:1px dashed #30363d; font-size:10px; color:#3b82f6; margin-bottom:15px;">Loading...</div>
-            <button onclick="copyRef()" class="btn-blue">Copy Link</button>
+            <p>রেফার বোনাস পেতে লিঙ্কটি কপি করে আপনার বন্ধুদের কাছে শেয়ার করুন। প্রতি রেফারে আয় ৪০ টাকা।</p>
+            <div id="ref-url" style="background:#0d1117; padding:12px; border-radius:10px; border:1px dashed #30363d; font-size:11px; color:#58a6ff; margin-bottom:20px; word-break:break-all;">...</div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="copyRef()" class="btn-blue">Copy Referral Link</button>
+                <button onclick="tg.shareUrl(refLink)" class="btn-green">Share Now</button>
         </div>
     </div>
 
