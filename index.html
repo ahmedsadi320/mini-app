@@ -177,7 +177,7 @@
             document.getElementById('ref-url').innerText = `https://t.me/Red_Chilii_bot/app?startapp=${uId}`;
         });
 
-        // ৯টি অ্যাড কার্ড তৈরি (স্ক্রিনশটের মতো ডিজাইনে)
+        // ৯টি আলাদা অ্যাড বক্স তৈরি
 const adList = document.getElementById('ad-list');
 adList.innerHTML = ""; 
 for(let i=1; i<=9; i++) {
@@ -185,7 +185,7 @@ for(let i=1; i<=9; i++) {
     <div class="ad-card">
         <i class="ad-icon">📹</i>
         <div class="ad-title">Rewarded Ad #${i}</div>
-        <button onclick="handleTask('ad-${i}', 'https://t.me/fojikapp', 25)" class="btn-verify">
+        <button id="ad-btn-${i}" onclick="handleTask('ad-${i}', 'https://google.com', 25)" class="btn-verify">
             Verify 📝
         </button>
         <p style="font-size: 11px; color: #8b949e; margin-top: 10px;">
@@ -194,47 +194,62 @@ for(let i=1; i<=9; i++) {
     </div>`;
 }
 
-        // ১৫ সেকেন্ড ভেরিফিকেশন লজিক (নিখুঁতভাবে ব্যালেন্স অ্যাড হবে)
-        let taskStartTime = 0;
-        let activeTask = null;
+        // ১৫ সেকেন্ড ভেরিফিকেশন এবং ইউনিক বক্স লজিক
+let taskStartTime = 0;
+let activeTask = null;
 
-        function handleTask(btnId, link, amount) {
+function handleTask(btnId, link, amount) {
+    const today = new Date().toDateString();
+    
+    uRef.once('value').then(s => {
+        const d = s.val() || {};
+        const completedTasks = d.completedTasks || {};
+
+        // চেক করা হচ্ছে এই বক্সটি আজ অলরেডি ক্লিক করা হয়েছে কি না
+        if (completedTasks[btnId] === today) {
+            tg.showAlert("এই বক্সের কাজ আপনি আজ শেষ করেছেন! অন্য বক্সে ক্লিক করুন।");
+        } else {
             window.open(link, '_blank');
             taskStartTime = Date.now();
-            activeTask = { amount: amount };
+            activeTask = { amount: amount, btnId: btnId };
             tg.showAlert("বিজ্ঞাপনে ১৫ সেকেন্ড থাকুন, নাহলে টাকা যোগ হবে না।");
         }
+    });
+}
 
-        window.onfocus = function() {
-            if (activeTask) {
-                const timeSpent = (Date.now() - taskStartTime) / 1000;
-                if (timeSpent >= 15) {
-                    const today = new Date().toDateString();
-                    uRef.once('value').then(s => {
-                        const d = s.val() || {};
-                        // চেক করা হচ্ছে আজকের লিমিট শেষ কি না
-                        if(activeTask.amount === 25 && d.lastAdDate === today && (d.adsWatched >= 9)) {
-                            tg.showAlert("আজকের ৯টি অ্যাড দেখার লিমিট শেষ!");
-                        } else {
-                            let newAdsCount = (d.adsWatched || 0);
-                            if(activeTask.amount === 25) newAdsCount += 1;
+window.onfocus = function() {
+    if (activeTask) {
+        const timeSpent = (Date.now() - taskStartTime) / 1000;
+        if (timeSpent >= 15) {
+            const today = new Date().toDateString();
+            
+            uRef.once('value').then(s => {
+                const d = s.val() || {};
+                let completedTasks = d.completedTasks || {};
+                
+                // ডাটাবেজে এই বক্স আইডির জন্য আজকের তারিখ সেভ করা হচ্ছে
+                completedTasks[activeTask.btnId] = today;
 
-                            uRef.update({ 
-                                balance: bal + activeTask.amount, 
-                                adsWatched: newAdsCount,
-                                lastAdDate: today
-                            }).then(() => {
-                                tg.showAlert(`${activeTask.amount} টাকা যোগ হয়েছে! ✅`);
-                            });
-                        }
-                        activeTask = null;
-                    });
-                } else {
-                    tg.showAlert("আপনি ১৫ সেকেন্ড পূর্ণ করেননি! টাকা যোগ হয়নি। ❌");
-                    activeTask = null;
-                }
-            }
-        };
+                uRef.update({ 
+                    balance: (d.balance || 0) + activeTask.amount, 
+                    adsWatched: (d.adsWatched || 0) + 1,
+                    completedTasks: completedTasks,
+                    lastAdDate: today
+                }).then(() => {
+                    tg.showAlert(`${activeTask.amount} টাকা যোগ হয়েছে! ✅`);
+                    // বাটন আইডি ad-btn-1, ad-btn-2 ইত্যাদি অনুযায়ী কালার পরিবর্তন
+                    const btnIndex = activeTask.btnId.split('-')[1];
+                    const btn = document.getElementById('ad-btn-' + btnIndex);
+                    if(btn) btn.style.background = "#444"; 
+                });
+                activeTask = null;
+            });
+        } else {
+            tg.showAlert("আপনি ১৫ সেকেন্ড পূর্ণ করেননি! টাকা যোগ হয়নি। ❌");
+            activeTask = null;
+        }
+    }
+};
 
         function submitWithdraw() {
             const amtInput = document.getElementById('w-amount').value;
