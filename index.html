@@ -177,33 +177,45 @@
             document.getElementById('ref-url').innerText = `https://t.me/Red_Chilii_bot/app?startapp=${uId}`;
         });
 
-        // আপনার অ্যাডস্টেরা থেকে নেওয়া ৩-৪টি ভিন্ন ভিন্ন লিঙ্ক এখানে দিন
+        // আপনার অ্যাড লিঙ্কগুলো
 const adLinks = [
     'https://t.me/fojikapp',
-        'https://t.me/fojikapp_bot',
-        'https://t.me/fojikapp',
-        'https://t.me/fojikapp_bot'
+    'https://t.me/fojikapp_bot',
+    'https://t.me/fojikapp',
+    'https://t.me/fojikapp_bot'
 ];
 
 const adList = document.getElementById('ad-list');
 adList.innerHTML = ""; 
 
-for(let i=1; i<=9; i++) {
-    // এই লজিকটি অটোমেটিক ৯টি বক্সের মধ্যে লিঙ্কগুলো ঘুরিয়ে ফিরিয়ে বসিয়ে দিবে
-    const currentLink = adLinks[(i-1) % adLinks.length];
+// ডাটাবেজ থেকে চেক করে বক্স তৈরি
+uRef.once('value').then(s => {
+    const d = s.val() || {};
+    const completedTasks = d.completedTasks || {};
+    const today = new Date().toDateString();
 
-    adList.innerHTML += `
-    <div class="ad-card">
-        <i class="ad-icon">📹</i>
-        <div class="ad-title">Rewarded Ad #${i}</div>
-        <button id="ad-btn-${i}" onclick="handleTask('ad-${i}', '${currentLink}', 25)" class="btn-verify">
-            Verify 📝
-        </button>
-        <p style="font-size: 11px; color: #8b949e; margin-top: 10px;">
-            পুরস্কার পেতে ১৫ সেকেন্ড বিজ্ঞাপনে থাকুন।
-        </p>
-    </div>`;
-}
+    for(let i=1; i<=9; i++) {
+        const btnId = `ad-${i}`;
+        const currentLink = adLinks[(i-1) % adLinks.length];
+        
+        // চেক করা হচ্ছে আজ এই বক্সের কাজ শেষ কি না
+        const statusText = (completedTasks[btnId] === today) 
+            ? "বক্সের কাজ আপনি আজ শেষ করেছেন! অন্য বক্সে ক্লিক করুন।" 
+            : "পুরস্কার পেতে ১৫ সেকেন্ড বিজ্ঞাপনে থাকুন।";
+
+        adList.innerHTML += `
+        <div class="ad-card">
+            <i class="ad-icon">📹</i>
+            <div class="ad-title">Rewarded Ad #${i}</div>
+            <button id="ad-btn-${i}" onclick="handleTask('${btnId}', '${currentLink}', 25)" class="btn-verify">
+                Verify 📝
+            </button>
+            <p id="msg-${btnId}" style="font-size: 11px; color: #8b949e; margin-top: 10px;">
+                ${statusText}
+            </p>
+        </div>`;
+    }
+});
 
         // ১৫ সেকেন্ড ভেরিফিকেশন এবং ইউনিক বক্স লজিক
 let taskStartTime = 0;
@@ -211,19 +223,20 @@ let activeTask = null;
 
 function handleTask(btnId, link, amount) {
     const today = new Date().toDateString();
-    
     uRef.once('value').then(s => {
         const d = s.val() || {};
         const completedTasks = d.completedTasks || {};
 
-        // চেক করা হচ্ছে এই বক্সটি আজ অলরেডি ক্লিক করা হয়েছে কি না
-        if (completedTasks[btnId] === today) {
-            tg.showAlert("এই বক্সের কাজ আপনি আজ শেষ করেছেন! অন্য বক্সে ক্লিক করুন।");
-        } else {
-            window.open(link, '_blank');
-            taskStartTime = Date.now();
+        window.open(link, '_blank');
+        taskStartTime = Date.now();
+        
+        // যদি কাজ আগে শেষ না হয়ে থাকে, তবেই টাকা যোগ করার জন্য activeTask সেট হবে
+        if (completedTasks[btnId] !== today) {
             activeTask = { amount: amount, btnId: btnId };
-            tg.showAlert("বিজ্ঞাপনে ১৫ সেকেন্ড থাকুন, নাহলে টাকা যোগ হবে না।");
+            tg.showAlert("বিজ্ঞাপনে ১৫ সেকেন্ড থাকুন।");
+        } else {
+            activeTask = null; // কাজ শেষ থাকলে টাকা যোগ হবে না, শুধু এড দেখা যাবে
+            tg.showAlert("আপনি এই বক্সের বোনাস আজ নিয়েছেন। শুধু এড দেখা যাবে।");
         }
     });
 }
@@ -233,22 +246,21 @@ window.onfocus = function() {
         const timeSpent = (Date.now() - taskStartTime) / 1000;
         if (timeSpent >= 15) {
             const today = new Date().toDateString();
-            
             uRef.once('value').then(s => {
                 const d = s.val() || {};
                 let completedTasks = d.completedTasks || {};
-                
-                // ডাটাবেজে এই বক্স আইডির জন্য আজকের তারিখ সেভ করা হচ্ছে
                 completedTasks[activeTask.btnId] = today;
 
                 uRef.update({ 
-                    balance: (d.balance || 0) + activeTask.amount, 
+                    balance: bal + activeTask.amount, 
                     adsWatched: (d.adsWatched || 0) + 1,
-                    completedTasks: completedTasks,
-                    lastAdDate: today
+                    completedTasks: completedTasks
                 }).then(() => {
-                    tg.showAlert(`${activeTask.amount} টাকা যোগ হয়েছে! ✅`);
-                    // বাটন আইডি ad-btn-1, ad-btn-2 ইত্যাদি অনুযায়ী কালার পরিবর্তন
+                    tg.showAlert("টাকা যোগ হয়েছে! ✅");
+                    // বক্সের নিচের লেখাটি সাথে সাথে পরিবর্তন করে দেওয়া হচ্ছে
+                    const msgEl = document.getElementById(`msg-${activeTask.btnId}`);
+                    if(msgEl) msgEl.innerText = "বক্সের কাজ আপনি আজ শেষ করেছেন! অন্য বক্সে ক্লিক করুন।";
+                    
                     const btnIndex = activeTask.btnId.split('-')[1];
                     const btn = document.getElementById('ad-btn-' + btnIndex);
                     if(btn) btn.style.background = "#444"; 
@@ -256,7 +268,7 @@ window.onfocus = function() {
                 activeTask = null;
             });
         } else {
-            tg.showAlert("আপনি ১৫ সেকেন্ড পূর্ণ করেননি! টাকা যোগ হয়নি। ❌");
+            tg.showAlert("১৫ সেকেন্ড পূর্ণ হয়নি! ❌");
             activeTask = null;
         }
     }
