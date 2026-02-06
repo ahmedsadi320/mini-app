@@ -177,15 +177,26 @@
             document.getElementById('ref-url').innerText = `https://t.me/Red_Chilii_bot/app?startapp=${uId}`;
         });
 
-        // ৯টি আলাদা অ্যাড বক্স তৈরি
+        // আপনার অ্যাডস্টেরা থেকে নেওয়া ৩-৪টি ভিন্ন ভিন্ন লিঙ্ক এখানে দিন
+const adLinks = [
+    'https://t.me/fojikapp', 
+    'https://t.me/fojikapp_bot, 
+    'https://t.me/fojikapp',
+    'https://t.me/fojikapp_bot'
+];
+
 const adList = document.getElementById('ad-list');
 adList.innerHTML = ""; 
+
 for(let i=1; i<=9; i++) {
+    // এই লজিকটি অটোমেটিক ৯টি বক্সের মধ্যে লিঙ্কগুলো ঘুরিয়ে ফিরিয়ে বসিয়ে দিবে
+    const currentLink = adLinks[(i-1) % adLinks.length];
+
     adList.innerHTML += `
     <div class="ad-card">
         <i class="ad-icon">📹</i>
         <div class="ad-title">Rewarded Ad #${i}</div>
-        <button id="ad-btn-${i}" onclick="handleTask('ad-${i}', 'https://google.com', 25)" class="btn-verify">
+        <button id="ad-btn-${i}" onclick="handleTask('ad-${i}', '${currentLink}', 25)" class="btn-verify">
             Verify 📝
         </button>
         <p style="font-size: 11px; color: #8b949e; margin-top: 10px;">
