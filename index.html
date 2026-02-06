@@ -32,12 +32,46 @@
         .btn-blue { background: #007bff; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; }
         .btn-green { background: #28a745; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; }
         .btn-withdraw { background: linear-gradient(90deg, #f80759 0%, #bc4e9c 100%); color: white; border: none; padding: 16px; border-radius: 14px; font-weight: bold; width: 100%; font-size: 16px; margin-top: 10px; cursor: pointer; }
-
+ 
         /* Support Grid */
         .supp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .supp-card { background: #1c2128; border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; }
         .supp-card i { font-size: 24px; color: #3b82f6; display: block; margin-bottom: 8px; }
+		/* অ্যাড কার্ডের বিশেষ ডিজাইন */
+.ad-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 15px;
+    text-align: center; /* সব কিছু মাঝখানে থাকবে */
+}
 
+.ad-icon {
+    font-size: 50px; /* আইকন বড় হবে */
+    color: #3b82f6;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.ad-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+.btn-verify {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    font-size: 15px;
+}
         /* Withdraw Input */
         .w-input { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 14px; color: white; outline: none; margin-bottom: 15px; font-size: 14px; }
 
@@ -142,17 +176,22 @@
             document.getElementById('ref-url').innerText = `https://t.me/Red_Chilii_bot/app?startapp=${uId}`;
         });
 
-        // ৯টি অ্যাড কার্ড (আপনার অনুরোধ অনুযায়ী)
-        const adList = document.getElementById('ad-list');
-        adList.innerHTML = ""; // আগের গুলো ক্লিয়ার করা
-        for(let i=1; i<=9; i++) {
-            adList.innerHTML += `
-            <div class="card">
-                <div style="font-size:40px; color:#3b82f6; margin-bottom:10px;">📹</div>
-                <h3>Rewarded Ad #${i}</h3>
-                <button onclick="handleTask('ad-${i}', 'https://google.com', 25)" class="btn-blue">অ্যাড দেখুন</button>
-            </div>`;
-        }
+        // ৯টি অ্যাড কার্ড তৈরি (স্ক্রিনশটের মতো ডিজাইনে)
+const adList = document.getElementById('ad-list');
+adList.innerHTML = ""; 
+for(let i=1; i<=9; i++) {
+    adList.innerHTML += `
+    <div class="ad-card">
+        <i class="ad-icon">📹</i>
+        <div class="ad-title">Rewarded Ad #${i}</div>
+        <button onclick="handleTask('ad-${i}', 'https://t.me/fojikapp', 25)" class="btn-verify">
+            Verify 📝
+        </button>
+        <p style="font-size: 11px; color: #8b949e; margin-top: 10px;">
+            পুরস্কার পেতে ১৫ সেকেন্ড বিজ্ঞাপনে থাকুন।
+        </p>
+    </div>`;
+}
 
         // ১৫ সেকেন্ড ভেরিফিকেশন লজিক (নিখুঁতভাবে ব্যালেন্স অ্যাড হবে)
         let taskStartTime = 0;
